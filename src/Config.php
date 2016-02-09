@@ -10,7 +10,6 @@
  */
 namespace Cascade;
 
-use Cascade\Config\ConfigLoader;
 use Cascade\Config\Loader\ClassLoader\FormatterLoader;
 use Cascade\Config\Loader\ClassLoader\HandlerLoader;
 use Cascade\Config\Loader\ClassLoader\LoggerLoader;
@@ -64,29 +63,13 @@ class Config
     protected $loggers = array();
 
     /**
-     * Config loader
-     * @var ConfigLoader
-     */
-    protected $loader = null;
-
-    /**
      * Instantiate a Config object
      *
-     * @param string | array $input user input
-     * @param ConfigLoader $loader Config loader object
+     * @param array $options
      */
-    public function __construct($input, ConfigLoader $loader)
+    public function __construct(array $options)
     {
-        $this->input = $input;
-        $this->loader = $loader;
-    }
-
-    /**
-     * Load config options into the options array using the injected loader
-     */
-    public function load()
-    {
-        $this->options = $this->loader->load($this->input);
+        $this->options = $options;
     }
 
     /**

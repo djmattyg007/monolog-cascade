@@ -11,7 +11,6 @@
 namespace Cascade;
 
 use Cascade\Config;
-use Cascade\Config\ConfigLoader;
 use Monolog\Handler\HandlerInterface;
 use Monolog\Logger;
 use Monolog\Registry;
@@ -107,8 +106,7 @@ class Cascade
      */
     public static function fileConfig($resource)
     {
-        self::$config = new Config($resource, new ConfigLoader());
-        self::$config->load();
+        self::$config = new Config($resource);
         self::$config->configure();
     }
 }
