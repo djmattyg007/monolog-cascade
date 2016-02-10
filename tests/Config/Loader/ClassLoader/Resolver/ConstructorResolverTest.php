@@ -13,8 +13,6 @@ namespace Cascade\Tests\Config\Loader\ClassLoader\Resolver;
 use Cascade\Config\Loader\ClassLoader\Resolver\ConstructorResolver;
 use Cascade\Tests\Fixtures\SampleClass;
 
-use Symfony\Component\Serializer\NameConverter\CamelCaseToSnakeCaseNameConverter;
-
 /**
  * Class ConstructorResolverTest
  *
@@ -83,10 +81,9 @@ class ConstructorResolverTest extends \PHPUnit_Framework_TestCase
     public function testInitConstructorArgs()
     {
         $expectedConstructorArgs = array();
-        $nameConverter = new CamelCaseToSnakeCaseNameConverter();
 
         foreach ($this->getConstructorArgs() as $param) {
-            $expectedConstructorArgs[$nameConverter->denormalize($param->getName())] = $param;
+            $expectedConstructorArgs[$param->getName()] = $param;
         }
         $this->assertEquals($expectedConstructorArgs, $this->resolver->getConstructorArgs());
     }
@@ -100,10 +97,10 @@ class ConstructorResolverTest extends \PHPUnit_Framework_TestCase
             array('someValue', 'hello', 'there', 'slither'),
             $this->resolver->hashToArgsArray(
                 array( // Not properly ordered on purpose
-                    'optionalB'     => 'there',
-                    'optionalA'     => 'hello',
-                    'optionalSnake' => 'slither',
-                    'mandatory'     => 'someValue',
+                    'optionalB'         => 'there',
+                    'optionalA'         => 'hello',
+                    'optional_snake'    => 'slither',
+                    'mandatory'         => 'someValue',
                 )
             )
         );
@@ -125,7 +122,7 @@ class ConstructorResolverTest extends \PHPUnit_Framework_TestCase
                     'optionalB'      => 'there',
                     'optionalA'      => 'hello',
                     'mandatory'      => 'someValue',
-                    'optionalSnake'  => 'slither',
+                    'optional_snake' => 'slither',
                 )
             ),
             array(

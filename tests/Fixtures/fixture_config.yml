@@ -6,7 +6,7 @@ disable_existing_loggers: false
 formatters:
     spaced:
         format: "%datetime% %channel%.%level_name%  %message%\n"
-        include_stacktraces: true
+        includeStacktraces: true
     dashed:
         format: "%datetime%-%channel%.%level_name% - %message%\n"
 

@@ -78,16 +78,6 @@ class ClassLoaderTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals($expectedClass, $loader->class);
     }
 
-    public function testOptionsToCamelCase()
-    {
-        $array = array('hello_there' => 'Hello', 'bye_bye' => 'Bye');
-
-        $this->assertEquals(
-            array('helloThere' => 'Hello', 'byeBye' => 'Bye'),
-            ClassLoader::optionsToCamelCase($array)
-        );
-    }
-
     public function testGetExtraOptionsHandler()
     {
         ClassLoader::$extraOptionHandlers = array(
@@ -116,8 +106,8 @@ class ClassLoaderTest extends \PHPUnit_Framework_TestCase
         $options = array(
             'class' => 'Cascade\Tests\Fixtures\SampleClass',
             'mandatory' => 'someValue',
-            'optional_X' => 'testing some stuff',
-            'optional_Y' => 'testing other stuff',
+            'optionalX' => 'testing some stuff',
+            'optionalY' => 'testing other stuff',
             'hello' => 'hello',
             'there' => 'there',
         );

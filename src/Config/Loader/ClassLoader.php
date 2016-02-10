@@ -11,7 +11,6 @@
 namespace Cascade\Config\Loader;
 
 use Symfony\Component\OptionsResolver\OptionsResolver;
-use Symfony\Component\Serializer\NameConverter\CamelCaseToSnakeCaseNameConverter;
 
 use Cascade\Config\Loader\ClassLoader\Resolver\ConstructorResolver;
 use Cascade\Config\Loader\ClassLoader\Resolver\ExtraOptionsResolver;
@@ -80,7 +79,7 @@ class ClassLoader
      */
     public function __construct(array $options)
     {
-        $this->rawOptions = self::optionsToCamelCase($options);
+        $this->rawOptions = $options;
         $this->setClass();
         $this->reflected = new \ReflectionClass($this->class);
     }
@@ -115,27 +114,6 @@ class ClassLoader
                 $option = $classLoader->load();
             }
         }
-    }
-
-    /**
-     * Return option values indexed by name using camelCased keys
-     *
-     * @param  array  $options array of options
-     * @return mixed[] array of options indexed by (camelCased) name
-     */
-    public static function optionsToCamelCase(array $options)
-    {
-        $optionsByName = array();
-
-        if (count($options)) {
-            $nameConverter = new CamelCaseToSnakeCaseNameConverter();
-
-            foreach ($options as $name => $value) {
-                $optionsByName[$nameConverter->denormalize($name)] = $value;
-            }
-        }
-
-        return $optionsByName;
     }
 
     /**
