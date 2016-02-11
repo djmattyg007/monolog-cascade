@@ -8,12 +8,12 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-namespace Cascade;
+namespace MattyG\MonologCascade;
 
-use Cascade\Config\Loader\ClassLoader\FormatterLoader;
-use Cascade\Config\Loader\ClassLoader\HandlerLoader;
-use Cascade\Config\Loader\ClassLoader\LoggerLoader;
-use Cascade\Config\Loader\ClassLoader\ProcessorLoader;
+use MattyG\MonologCascade\Config\ClassLoader\FormatterLoader;
+use MattyG\MonologCascade\Config\ClassLoader\HandlerLoader;
+use MattyG\MonologCascade\Config\ClassLoader\LoggerLoader;
+use MattyG\MonologCascade\Config\ClassLoader\ProcessorLoader;
 use Monolog\Formatter\FormatterInterface;
 use Monolog\Handler\HandlerInterface;
 use Monolog\Registry;

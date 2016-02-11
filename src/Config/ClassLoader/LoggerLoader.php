@@ -8,10 +8,10 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-namespace Cascade\Config\Loader\ClassLoader;
+namespace MattyG\MonologCascade\Config\ClassLoader;
 
-use Cascade\Cascade;
-use Cascade\Config\Loader\ClassLoader;
+use MattyG\MonologCascade\Cascade;
+use MattyG\MonologCascade\Config\ClassLoader;
 
 /**
  * Logger Loader. Instantiate a Logger and set passed in handlers and processors if any

@@ -8,13 +8,12 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-namespace Cascade\Tests;
+namespace MattyG\MonologCascade\Tests;
 
+use MattyG\MonologCascade\Cascade;
+use MattyG\MonologCascade\Tests\Fixtures;
 use Monolog\Logger;
 use Monolog\Registry;
-
-use Cascade\Cascade;
-use Cascade\Tests\Fixtures;
 
 /**
  * Class CascadeTest
@@ -60,6 +59,6 @@ class CascadeTest extends \PHPUnit_Framework_TestCase
     {
         $options = Fixtures::getPhpArrayConfig();
         Cascade::fileConfig($options);
-        $this->assertInstanceOf('Cascade\Config', Cascade::getConfig());
+        $this->assertInstanceOf(\MattyG\MonologCascade\Config::class, Cascade::getConfig());
     }
 }

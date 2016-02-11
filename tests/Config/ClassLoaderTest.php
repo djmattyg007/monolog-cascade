@@ -8,15 +8,14 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-namespace Cascade\Tests\Config\Loader;
+namespace MattyG\MonologCascade\Tests\Config;
 
+use MattyG\MonologCascade\Config\ClassLoader;
+use MattyG\MonologCascade\Tests\Fixtures\SampleClass;
+use MattyG\MonologCascade\Tests\Fixtures\DependentClass;
 use Monolog\Handler\TestHandler;
 use Monolog\Logger;
 use Monolog\Registry;
-
-use Cascade\Config\Loader\ClassLoader;
-use Cascade\Tests\Fixtures\SampleClass;
-use Cascade\Tests\Fixtures\DependentClass;
 
 /**
  * Class ClassLoaderTest
@@ -51,10 +50,10 @@ class ClassLoaderTest extends \PHPUnit_Framework_TestCase
         return array(
             array(
                 array(
-                    'class' => 'Cascade\Tests\Fixtures\SampleClass',
+                    'class' => SampleClass::class,
                     'some_param' => 'abc'
                 ),
-                'Cascade\Tests\Fixtures\SampleClass'
+                SampleClass::class
             ),
             array(
                 array(
@@ -86,7 +85,7 @@ class ClassLoaderTest extends \PHPUnit_Framework_TestCase
                     $instance->setHello(strtoupper($value));
                 }
             ),
-            'Cascade\Tests\Fixtures\SampleClass' => array(
+            SampleClass::class => array(
                 'there' => function ($instance, $value) {
                     $instance->setThere(strtoupper($value).'!!!');
                 }
@@ -104,7 +103,7 @@ class ClassLoaderTest extends \PHPUnit_Framework_TestCase
     public function testLoad()
     {
         $options = array(
-            'class' => 'Cascade\Tests\Fixtures\SampleClass',
+            'class' => SampleClass::class,
             'mandatory' => 'someValue',
             'optionalX' => 'testing some stuff',
             'optionalY' => 'testing other stuff',
@@ -118,7 +117,7 @@ class ClassLoaderTest extends \PHPUnit_Framework_TestCase
                     $instance->setHello(strtoupper($value));
                 }
             ),
-            'Cascade\Tests\Fixtures\SampleClass' => array(
+            SampleClass::class => array(
                 'there' => function ($instance, $value) {
                     $instance->setThere(strtoupper($value).'!!!');
                 }
@@ -145,9 +144,9 @@ class ClassLoaderTest extends \PHPUnit_Framework_TestCase
     public function testLoadDependency()
     {
         $options = array(
-            'class' => 'Cascade\Tests\Fixtures\DependentClass',
+            'class' => DependentClass::class,
             'dependency' => array(
-                'class' => 'Cascade\Tests\Fixtures\SampleClass',
+                'class' => SampleClass::class,
                 'mandatory' => 'someValue',
             )
         );

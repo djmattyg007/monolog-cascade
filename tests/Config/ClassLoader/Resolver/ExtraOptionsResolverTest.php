@@ -8,10 +8,11 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-namespace Cascade\Tests\Config\Loader\ClassLoader\Resolver;
+namespace MattyG\MonologCascade\Tests\Config\ClassLoader\Resolver;
 
-use Cascade\Config\Loader\ClassLoader\Resolver\ExtraOptionsResolver;
-use Cascade\Tests\Fixtures\SampleClass;
+use MattyG\MonologCascade\Config\ClassLoader;
+use MattyG\MonologCascade\Config\ClassLoader\Resolver\ExtraOptionsResolver;
+use MattyG\MonologCascade\Tests\Fixtures\SampleClass;
 
 /**
  * Class ExtraOptionsResolverTest
@@ -39,7 +40,7 @@ class ExtraOptionsResolverTest extends \PHPUnit_Framework_TestCase
      */
     public function setUp()
     {
-        $this->class = 'Cascade\Tests\Fixtures\SampleClass';
+        $this->class = SampleClass::class;
         $this->params = array('optionalA', 'optionalB');
         $this->resolver = new ExtraOptionsResolver(
             new \ReflectionClass($this->class),
@@ -106,7 +107,7 @@ class ExtraOptionsResolverTest extends \PHPUnit_Framework_TestCase
         return array(
             array(
                 array('optionalA', 'optionalB', 'mandatory'),
-                $this->getMockBuilder('Cascade\Config\Loader\ClassLoader')
+                $this->getMockBuilder(ClassLoader::class)
                     ->disableOriginalConstructor()
                     ->getMock()->method('canHandle')
                     ->willReturn(true)
@@ -127,7 +128,7 @@ class ExtraOptionsResolverTest extends \PHPUnit_Framework_TestCase
         );
 
         // Create a stub for the SomeClass class.
-        $stub = $this->getMockBuilder('Cascade\Config\Loader\ClassLoader')
+        $stub = $this->getMockBuilder(ClassLoader::class)
             ->disableOriginalConstructor()
             ->getMock();
 

@@ -8,11 +8,10 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-namespace Cascade\Tests\Config\Loader\ClassLoader;
+namespace MattyG\MonologCascade\Tests\Config\ClassLoader;
 
+use MattyG\MonologCascade\Config\ClassLoader\HandlerLoader;
 use Monolog\Formatter\LineFormatter;
-
-use Cascade\Config\Loader\ClassLoader\HandlerLoader;
 
 /**
  * Class HandlerLoaderTest

@@ -8,12 +8,12 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-namespace Cascade\Config\Loader;
+namespace MattyG\MonologCascade\Config;
 
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
-use Cascade\Config\Loader\ClassLoader\Resolver\ConstructorResolver;
-use Cascade\Config\Loader\ClassLoader\Resolver\ExtraOptionsResolver;
+use MattyG\MonologCascade\Config\ClassLoader\Resolver\ConstructorResolver;
+use MattyG\MonologCascade\Config\ClassLoader\Resolver\ExtraOptionsResolver;
 
 /**
  * Class Loader. Instantiate an object given a set of options. The option might look like:

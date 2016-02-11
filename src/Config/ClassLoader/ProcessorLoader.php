@@ -8,9 +8,9 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-namespace Cascade\Config\Loader\ClassLoader;
+namespace MattyG\MonologCascade\Config\ClassLoader;
 
-use Cascade\Config\Loader\ClassLoader;
+use MattyG\MonologCascade\Config\ClassLoader;
 
 /**
  * Processor Loader. Loads the Processor options, validate them and instantiates

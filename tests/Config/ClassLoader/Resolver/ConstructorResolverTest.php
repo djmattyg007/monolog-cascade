@@ -8,10 +8,10 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-namespace Cascade\Tests\Config\Loader\ClassLoader\Resolver;
+namespace MattyG\MonologCascade\Tests\Config\ClassLoader\Resolver;
 
-use Cascade\Config\Loader\ClassLoader\Resolver\ConstructorResolver;
-use Cascade\Tests\Fixtures\SampleClass;
+use MattyG\MonologCascade\Config\ClassLoader\Resolver\ConstructorResolver;
+use MattyG\MonologCascade\Tests\Fixtures\SampleClass;
 
 /**
  * Class ConstructorResolverTest
@@ -39,7 +39,7 @@ class ConstructorResolverTest extends \PHPUnit_Framework_TestCase
      */
     public function setUp()
     {
-        $this->class = 'Cascade\Tests\Fixtures\SampleClass';
+        $this->class = SampleClass::class;
         $this->resolver = new ConstructorResolver(new \ReflectionClass($this->class));
         parent::setUp();
     }

@@ -8,11 +8,10 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-namespace Cascade\Config\Loader\ClassLoader;
+namespace MattyG\MonologCascade\Config\ClassLoader;
 
+use MattyG\MonologCascade\Config\ClassLoader;
 use Monolog\Formatter\FormatterInterface;
-
-use Cascade\Config\Loader\ClassLoader;
 
 /**
  * Handler Loader. Loads the Handler options, validate them and instantiates

@@ -8,14 +8,13 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-namespace Cascade\Tests;
+namespace MattyG\MonologCascade\Tests;
 
+use MattyG\MonologCascade\Config;
+use MattyG\MonologCascade\Tests\Fixtures;
 use Monolog\Handler\TestHandler;
 use Monolog\Logger;
 use Monolog\Registry;
-
-use Cascade\Config;
-use Cascade\Tests\Fixtures;
 
 /**
  * Class ConfigTest
@@ -29,7 +28,7 @@ class ConfigTest extends \PHPUnit_Framework_TestCase
         $options = Fixtures::getPhpArrayConfig();
 
         // Mocking the config object and set expectations for the configure methods
-        $config = $this->getMockBuilder('Cascade\Config')
+        $config = $this->getMockBuilder(Config::class)
             ->setConstructorArgs(array($options))
             ->setMethods(array(
                     'configureFormatters',
@@ -56,7 +55,7 @@ class ConfigTest extends \PHPUnit_Framework_TestCase
         $options = array();
 
         // Mocking the config object
-        $config = $this->getMockBuilder('Cascade\Config')
+        $config = $this->getMockBuilder(Config::class)
             ->setConstructorArgs(array($options))
             ->setMethods(null)
             ->getMock();

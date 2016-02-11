@@ -8,9 +8,9 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-namespace Cascade\Config\Loader\ClassLoader;
+namespace MattyG\MonologCascade\Config\ClassLoader;
 
-use Cascade\Config\Loader\ClassLoader;
+use MattyG\MonologCascade\Config\ClassLoader;
 
 /**
  * Formatter Loader. Loads the Formatter options, validate them and instantiates

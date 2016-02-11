@@ -8,9 +8,9 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-namespace Cascade\Tests\Config\Loader\ClassLoader;
+namespace MattyG\MonologCascade\Tests\Config\ClassLoader;
 
-use Cascade\Config\Loader\ClassLoader\ProcessorLoader;
+use MattyG\MonologCascade\Config\ClassLoader\ProcessorLoader;
 use Monolog\Processor\WebProcessor;
 
 /**

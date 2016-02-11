@@ -8,9 +8,9 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-namespace Cascade;
+namespace MattyG\MonologCascade;
 
-use Cascade\Config;
+use MattyG\MonologCascade\Config;
 use Monolog\Handler\HandlerInterface;
 use Monolog\Logger;
 use Monolog\Registry;

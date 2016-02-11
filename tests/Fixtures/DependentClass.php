@@ -8,7 +8,7 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-namespace Cascade\Tests\Fixtures;
+namespace MattyG\MonologCascade\Tests\Fixtures;
 
 /**
  * Class SampleClass
@@ -19,7 +19,7 @@ class DependentClass
 {
     /**
      * An object dependency
-     * @var Cascade\Tests\Fixtures\SampleClass
+     * @var MattyG\MonologCascade\Tests\Fixtures\SampleClass
      */
     private $dependency;
 
@@ -38,7 +38,7 @@ class DependentClass
     /**
      * Set the object dependency
      *
-     * @param Cascade\Tests\Fixtures\SampleClass $dependency Some value
+     * @param MattyG\MonologCascade\Tests\Fixtures\SampleClass $dependency Some value
      */
     public function setDependency($dependency)
     {

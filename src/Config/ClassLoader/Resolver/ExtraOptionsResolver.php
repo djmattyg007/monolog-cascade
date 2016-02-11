@@ -8,11 +8,10 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-namespace Cascade\Config\Loader\ClassLoader\Resolver;
+namespace MattyG\MonologCascade\Config\ClassLoader\Resolver;
 
+use MattyG\MonologCascade\Config\ClassLoader;
 use Symfony\Component\OptionsResolver\OptionsResolver;
-
-use Cascade\Config\Loader\ClassLoader;
 
 /**
  * Extra options resolver. Set up an option resolver for the passed in params and
