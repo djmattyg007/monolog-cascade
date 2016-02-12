@@ -1,12 +1,12 @@
-Monolog Cascade [![Build Status](https://travis-ci.org/theorchard/monolog-cascade.svg?branch=master)](https://travis-ci.org/theorchard/monolog-cascade) [![Coverage Status](https://coveralls.io/repos/theorchard/monolog-cascade/badge.svg?branch=master)](https://coveralls.io/r/theorchard/monolog-cascade?branch=master)
+Monolog Cascade
 ===============
 
 What is Monolog Cascade?
 ------------------------
 
-Monolog Cascade is a [Monolog](https://github.com/Seldaek/monolog) extension that allows you to set up and configure multiple loggers and handlers from a single config file.
+Monolog Cascade is a [Monolog](https://github.com/Seldaek/monolog) extension that allows you to set up and configure multiple loggers and handlers from a single config file. This is a fork, with the intention of being fast and slim.
 
-It's been inspired by the [`logging.config`](https://docs.python.org/3.4/library/logging.config.html?highlight=fileconfig#module-logging.config) Python module.
+It's been inspired by the [`logging.config`](https://docs.python.org/3.5/library/logging.config.html) Python module.
 
 
 ------------
@@ -17,20 +17,24 @@ Installation
 
 Add `monolog-cascade` as a requirement in your `composer.json` file or run
 ```sh
-$ composer require theorchard/monolog-cascade
+$ composer require mattyg/monolog-cascade
 ```
 
-Note: Monolog Cascade requires PHP 5.3.9 or higher.
+Note: This fork of Monolog Cascade requires PHP 5.6 or higher.
 
 Usage
 -----
 
 ```php
 <?php
-use Cascade\Cascade;
+use MattyG\MonologCascade\Cascade;
+
+$config = json_decode(file_get_contents("/path/to/some/config.json"), true);
+// Or if you prefer YAML
+$config = yaml_parse_file("/path/to/some/config.yml");
 
 // configure your loggers
-Cascade::fileConfig('path/to/some/config.yaml');
+Cascade::fileConfig($config);
 ```
 
 Then just use your logger as shown below
@@ -41,40 +45,48 @@ Cascade::getLogger('myApp')->error('Maybe not...');
 
 Configuring your loggers
 ------------------------
-Monolog Cascade supports the following config formats:
- - Yaml
- - JSON
- - Php array
+This fork of Monolog Cascade only supports configuration passed as an array. This allows you to store your configuration in whatever format you desire.
 
 ### Configuration structure
-Here is a sample Yaml config file:
-```yaml
-
-formatters:
-    dashed:
-        class: Monolog\Formatter\LineFormatter
-        format: "%datetime%-%channel%.%level_name% - %message%\n"
-handlers:
-    console:
-        class: Monolog\Handler\StreamHandler
-        level: DEBUG
-        formatter: dashed
-        processors: [memory_processor]
-        stream: php://stdout
-    info_file_handler:
-        class: Monolog\Handler\StreamHandler
-        level: INFO
-        formatter: dashed
-        stream: ./example_info.log
-processors:
-    web_processor:
-        class: Monolog\Processor\WebProcessor
-    memory_processor:
-        class: Monolog\Processor\MemoryUsageProcessor
-loggers:
-    myLogger:
-        handlers: [console, info_file_handler]
-        processors: [web_processor]
+Here is a sample JSON config file:
+```json
+{
+    "formatters": {
+        "dashed": {
+            "class": "Monolog\\Formatter\\LineFormatter",
+            "format": "%datetime%-%channel%.%level_name% - %message%\n"
+        }
+    },
+    "handlers": {
+        "console": {
+            "class": "Monolog\\Handler\\StreamHandler",
+            "level": "DEBUG",
+            "formatter": "dashed",
+            "processors": "[memory_processor]",
+            "stream": "php://stdout",
+        },
+        "info_file_handler": {
+            "class": "Monolog\\Handler\\StreamHandler",
+            "level": "INFO",
+            "formatter": "dashed",
+            "stream: "./example_info.log"
+        }
+    },
+    "processors": {
+        "web_processor": {
+            "class": "Monolog\\Processor\\WebProcessor"
+        },
+        "memory_processor": {
+            "class": "Monolog\\Processor\\MemoryUsageProcessor"
+        }
+    },
+    "loggers": {
+        "myLogger": {
+            "handlers": ["console", "info_file_handler"],
+            "processors": ["web_processor"]
+        }
+    }
+}
 ```
 
 More information on how the Cascade config parser loads and reads the parameters:
@@ -83,13 +95,13 @@ Only the `loggers` key is required. If `formatters` and/or `handlers` are ommitt
 
 Other keys are optional and would be interpreted as described below:
 
-- **_formatters_** - the derived associative array (from the Yaml or JSON) in which each key is the formatter identifier holds keys/values to configure your formatters.
+- **_formatters_** - the array in which each key is the formatter identifier holds keys/values to configure your formatters.
 The only _reserved_ key is `class` and it should contain the classname of the formatter you would like to use. Other parameters will be interpreted as constructor parameters for that class and passed in when the formatter object is instanced by the Cascade config loader.<br />
 If some parameters are not present in the constructor, they will be treated as extra parameters and Cascade will try to interpret them should they match any custom handler functions that are able to use them. (see [Extra Parameters](#user-content-extra-parameters-other-than-constructors) section below)<br />
 
     If `class` is not provided Cascade will default to `Monolog\Formatter\LineFormatter`
 
-- **_handlers_** - the derived associative array (from the Yaml or JSON) in which each key is the handler identifier holds keys/values to configure your handlers.<br />The following keys are _reserved_:
+- **_handlers_** - the array in which each key is the handler identifier holds keys/values to configure your handlers.<br />The following keys are _reserved_:
     - `class` (optional): classname of the handler you would like to use
     - `formatter` (optional): formatter identifier that you have defined
     - `processors` (optional): array of processor identifiers that you have defined
@@ -99,28 +111,12 @@ If some parameters are not present in the constructor, they will be treated as e
 
     If class is not provided Cascade will default to `Monolog\Handler\StreamHandler`
 
-- **_processors_** - the derived associative array (from the Yaml or JSON) in which each key is the processor identifier holds keys/values to configure your processors.<br />The following key is _reserved_:
+- **_processors_** - the array in which each key is the processor identifier holds keys/values to configure your processors.<br />The following key is _reserved_:
     - `class` (required): classname of the processor you would like to use
 
-- **_loggers_** - the derived array (from the Yaml or JSON) in which each key is the logger identifier may contain only a `handlers` key and/or a `processors` key. You can decide what handler(s) and/or processor(s) you would like your logger to use.
+- **_loggers_** - the array in which each key is the logger identifier may contain only a `handlers` key and/or a `processors` key. You can decide what handler(s) and/or processor(s) you would like your logger to use.
 
 **Note**: If you would like to use objects as parameters for your handlers, you can pass a class name (using the `class` option) with the corresponding arguments just like you would configure your handler. Cascade recursively instantiates and loads those objects as it parses the config file. See [this sample config file](https://github.com/theorchard/monolog-cascade/blob/master/examples/dependency_config.yml).
-
-#### Parameter case
-You can use either _underscored_ or _camelCased_ style in your config files, it does not matter. However, it is important that they match the names of the arguments from the constructor method.
-
-```php
-public function __construct($level = Logger::ERROR, $bubble = true, $appName = null)
-```
-
-Using a Yaml file:
-```yaml
-    level: ERROR,
-    bubble: true,
-    app_name: "some app that I wrote"
-```
-
-Cascade will _camelCase_ all the names of your parameters internally prior to be passed to the constructors.
 
 #### Optional keys
 `formatters`, `handlers` and `processors` keys are optional. If ommitted Cascade will default to Monolog's default formatter and handler: `Monolog\Formatter\LineFormatter` and `Monolog\Handler\StreamHandler` to `stderr`. If `processors` is ommitted, your logger(s) won't use any.
@@ -138,23 +134,27 @@ You may want to have your Formatters and/or Handlers consume values other than v
 1. _Instance method_
     <br />Your Formatter or Handler has a defined method that takes a param as input. In that case you can write it as follow in your config file:
 
-    ```yaml
-    formatters:
-      spaced:
-          class: Monolog\Formatter\LineFormatter
-          format: "%datetime% %channel%.%level_name%  %message%\n"
-          include_stacktraces: true
+    ```json
+    "formatters": {
+        "spaced": {
+            "class": "Monolog\\Formatter\\LineFormatter",
+            "format": "%datetime% %channel%.%level_name%  %message%\n",
+            "includeStacktraces": true
+        }
+    }
     ```
-    In this example, the `LineFormatter` class has an `includeStackTrace` method that takes a boolean. This method will be called upon instantiation.<br />
+    In this example, the `LineFormatter` class has an `includeStacktraces` method that takes a boolean. This method will be called upon instantiation.<br />
 
 2. _Public member_
     <br />Your Formatter or Handler has a public member that can be set.
 
-    ```yaml
-    formatters:
-        spaced:
-            class: Monolog\Formatter\SomeFormatter
-            some_public_member: "some value"
+    ```json
+    "formatters": {
+        "spaced": {
+            "class": "Monolog\\Formatter\\SomeFormatter",
+            "somePublicMember": "some value"
+        }
+    }
     ```
     In this example, the public member will be set to the passed in value upon instantiation.<br />
 
@@ -190,14 +190,8 @@ Make sure your code follows the [PSR-2](https://github.com/php-fig/fig-standards
 
 What's next?
 ------------
- - add support for `.ini` config files
  - add support for namespaced Loggers with message propagation (through handler inheritance) so children loggers log messages using parent's handlers
  - add more custom function handlers to cover all the possible options of the current Monolog Formatters and Handlers
  - ~~add support for Processors (DONE)~~
  - ~~add support for DB/Store and other handlers requiring injection into the constructor ([issue #30](https://github.com/theorchard/monolog-cascade/issues/30)) (DONE)~~
  - other suggestions?
-
-
-Symfony Users
--------------
-You may want to use [MonologBundle](https://github.com/symfony/MonologBundle) as it integrates directly with your favorite framework.
