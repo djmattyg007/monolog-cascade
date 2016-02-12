@@ -31,69 +31,6 @@ class Fixtures
     }
 
     /**
-     * Return the fixture Yaml config file
-     * @return string path to yaml config file
-     */
-    public static function getYamlConfigFile()
-    {
-        return self::fixtureDir().'/fixture_config.yml';
-    }
-
-    /**
-     * Return the fixture sample Yaml file
-     * @return string path to a sample yaml file
-     */
-    public static function getSampleYamlFile()
-    {
-        return self::fixtureDir().'/fixture_sample.yml';
-    }
-
-    /**
-     * Return the fixture sample Yaml string
-     * @return string sample yaml string
-     */
-    public static function getSampleYamlString()
-    {
-        return trim(
-            '---'."\n".
-            'greeting: "hello"'."\n".
-            'to: "you"'."\n"
-        );
-    }
-
-    /**
-     * Return the fixture JSON config file
-     * @return string path to JSON config file
-     */
-    public static function getJsonConfigFile()
-    {
-        return self::fixtureDir().'/fixture_config.json';
-    }
-
-    /**
-     * Return the fixture sample JSON file
-     * @return string path to a sample JSON file
-     */
-    public static function getSampleJsonFile()
-    {
-        return self::fixtureDir().'/fixture_sample.json';
-    }
-
-    /**
-     * Return the fixture sample JSON string
-     * @return string sample JSON string
-     */
-    public static function getSampleJsonString()
-    {
-        return trim(
-            '{'."\n".
-            '    "greeting": "hello",'."\n".
-            '    "to": "you"'."\n".
-            '}'."\n"
-        );
-    }
-
-    /**
      * Return a sample string
      * @return string sample string
      */
