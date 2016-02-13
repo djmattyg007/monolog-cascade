@@ -69,7 +69,7 @@ Here is a sample JSON config file:
             "class": "Monolog\\Handler\\StreamHandler",
             "level": "INFO",
             "formatter": "dashed",
-            "stream: "./example_info.log"
+            "stream": "./example_info.log"
         }
     },
     "processors": {
