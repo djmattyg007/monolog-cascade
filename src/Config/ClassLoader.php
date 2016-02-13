@@ -11,10 +11,9 @@
  */
 namespace MattyG\MonologCascade\Config;
 
-use Symfony\Component\OptionsResolver\OptionsResolver;
-
 use MattyG\MonologCascade\Config\ClassLoader\Resolver\ConstructorResolver;
 use MattyG\MonologCascade\Config\ClassLoader\Resolver\ExtraOptionsResolver;
+use Symfony\Component\OptionsResolver\OptionsResolver;
 
 /**
  * Class Loader. Instantiate an object given a set of options. The option might look like:
@@ -29,6 +28,7 @@ use MattyG\MonologCascade\Config\ClassLoader\Resolver\ExtraOptionsResolver;
  * For the latter you need to make sure there is a handler defined for that option
  *
  * @author Raphael Antonmattei <rantonmattei@theorchard.com>
+ * @author Matthew Gamble
  */
 class ClassLoader
 {
@@ -44,32 +44,33 @@ class ClassLoader
      *             'myOption' => Closure
      *         ), ...
      *     )
+     *
      * @var array
      */
     public static $extraOptionHandlers = array();
 
     /**
      * Name of the class you want to load
+     *
      * @var String
      */
     public $class = null;
 
     /**
      * Reflected object of the class passed in
+     *
      * @var ReflectionClass
      */
     protected $reflected = null;
 
     /**
-     * Array of options. This is a raw copy of the options passed in.
+     * The original array of options passed to the constructor
+     *
      * @var array
      */
     protected $rawOptions = array();
 
     /**
-     * Constructor
-     *
-     * @param array $options array of options
      * The option array might look like:
      *     array(
      *         'class' => 'Some\Class',
@@ -77,6 +78,8 @@ class ClassLoader
      *         'some_param' => 'def',
      *         'some_other_param' => 'sdsad'
      *     )
+     *
+     * @param array $options array of options
      */
     public function __construct(array $options)
     {
@@ -100,7 +103,7 @@ class ClassLoader
 
     /**
      * Recursively loads objects into any of the rawOptions that represent
-     * a class
+     * a class.
      *
      * @author Dom Morgan <dom@d3r.com>
      */
@@ -124,7 +127,7 @@ class ClassLoader
      * Extra options are those that are not in the contructor. The constructor arguments determine
      * what goes into which bucket
      *
-     * @return array array of constructorOptions and extraOptions
+     * @return array An array of constructorOptions and extraOptions
      */
     private function resolveOptions()
     {
@@ -155,9 +158,9 @@ class ClassLoader
 
     /**
      * Instantiate the reflected object using the parsed contructor args and set
-     * extra options if any
+     * extra options (if any).
      *
-     * @return mixed instance of the reflected object
+     * @return object An instance of the reflected object
      */
     public function load()
     {
@@ -172,10 +175,10 @@ class ClassLoader
     }
 
     /**
-     * Indicates whether or not an option is supported by the loader
+     * Check whether or not an option is supported by the loader.
      *
-     * @param  string $extraOptionName Option name
-     * @return boolean whether or not an option is supported by the loader
+     * @param string $extraOptionName Option name
+     * @return bool Whether or not an option is supported by the loader
      */
     public function canHandle($extraOptionName)
     {
@@ -185,9 +188,9 @@ class ClassLoader
     }
 
     /**
-     * Get the corresponding handler for a given option
+     * Get the corresponding handler for a given option.
      *
-     * @param  string $extraOptionName Option name
+     * @param string $extraOptionName Option name
      * @return Closure|null Corresponding Closure object or null if not found
      */
     public function getExtraOptionsHandler($extraOptionName)
@@ -208,8 +211,8 @@ class ClassLoader
     /**
      * Set extra options if any were requested
      *
-     * @param  array $extraOptions Array of extra options (key => value)
-     * @param  mixed $instance Instance you want to set options for
+     * @param array $extraOptions An array of extra options (key => value)
+     * @param mixed $instance The instance you want to set options for
      */
     public function loadExtraOptions($extraOptions, $instance)
     {

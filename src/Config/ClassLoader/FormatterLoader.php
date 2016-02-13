@@ -20,6 +20,7 @@ use MattyG\MonologCascade\Config\ClassLoader;
  * @see ClassLoader
  *
  * @author Raphael Antonmattei <rantonmattei@theorchard.com>
+ * @author Matthew Gamble
  */
 class FormatterLoader extends ClassLoader
 {
@@ -29,7 +30,6 @@ class FormatterLoader extends ClassLoader
     const DEFAULT_CLASS = '\Monolog\Formatter\LineFormatter';
 
     /**
-     * Constructor
      * @see ClassLoader::__construct
      * @see Monolog\Formatter classes for formatter options
      *

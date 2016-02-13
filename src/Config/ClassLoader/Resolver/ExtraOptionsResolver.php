@@ -11,6 +11,7 @@
  */
 namespace MattyG\MonologCascade\Config\ClassLoader\Resolver;
 
+use ReflectionClass;
 use MattyG\MonologCascade\Config\ClassLoader;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
@@ -19,13 +20,14 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
  * apply validation rules if any
  *
  * @author Raphael Antonmattei <rantonmattei@theorchard.com>
+ * @author Matthew Gamble
  */
 class ExtraOptionsResolver
 {
     /**
      * Reflection class for which you want to resolve extra options
      *
-     * @var \ReflectionClass
+     * @var ReflectionClass
      */
     protected $reflected = null;
 
@@ -38,25 +40,24 @@ class ExtraOptionsResolver
 
     /**
      * Associative array of parameters to resolve against
+     *
      * @var array
      */
     protected $params = array();
 
     /**
-     * Constructor
-     *
-     * @param \ReflectionClass $reflected Reflection class for which you want to resolve
-     * extra options
-     * @param array $params Associative array of extra parameters we want to resolve against
+     * @param ReflectionClass $reflected Reflection class for which you want to resolve extra options
+     * @param array $params An associative array of extra parameters we want to resolve against
      */
-    public function __construct(\ReflectionClass $reflected, array $params = array())
+    public function __construct(ReflectionClass $reflected, array $params = array())
     {
         $this->reflected = $reflected;
         $this->setParams($params);
     }
 
     /**
-     * Set the parameters we want to resolve against
+     * Set the parameters we want to resolve against.
+     *
      * @param array $params Associative array of extra parameters we want to resolve against
      */
     public function setParams(array $params = array())
@@ -65,7 +66,7 @@ class ExtraOptionsResolver
     }
 
     /**
-     * Get the parameters we want to resolve against
+     * Get the parameters we want to resolve against.
      *
      * @return array $params Associative array of parameters
      */
@@ -77,7 +78,7 @@ class ExtraOptionsResolver
     /**
      * Returns the reflected object
      *
-     * @return \ReflectionClass
+     * @return ReflectionClass
      */
     public function getReflected()
     {
@@ -87,7 +88,7 @@ class ExtraOptionsResolver
     /**
      * Generate a unique hash based on the keys of the extra params
      *
-     * @param  array $params: array of parameters
+     * @param array $params: array of parameters
      * @return string unique MD5 hash
      */
     public static function generateParamsHashKey($params)
@@ -98,9 +99,8 @@ class ExtraOptionsResolver
     /**
      * Configure options for the provided OptionResolver to match extra params requirements
      *
-     * @param  OptionsResolver $optionsResolver OptionResolver to configure
-     * @param  ClassLoader|null $classLoader Optional class loader if you want to use custom
-     * handlers for some of the extra options
+     * @param OptionsResolver $optionsResolver OptionResolver to configure
+     * @param ClassLoader|null $classLoader Optional class loader if you want to use custom handlers for some of the extra options
      */
     protected function configureOptions(OptionsResolver $resolver, ClassLoader $classLoader = null)
     {
@@ -130,9 +130,8 @@ class ExtraOptionsResolver
     /**
      * Resolve options against extra params requirements
      *
-     * @param  array $options Array of option values
-     * @param  ClassLoader|null $classLoader Optional class loader if you want to use custom
-     * handlers to resolve the extra options
+     * @param array $options Array of option values
+     * @param ClassLoader|null $classLoader Optional class loader if you want to use custom handlers to resolve the extra options
      * @return array Array of resolved options
      */
     public function resolve($options, ClassLoader $classLoader = null)

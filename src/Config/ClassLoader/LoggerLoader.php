@@ -19,29 +19,34 @@ use MattyG\MonologCascade\Config\ClassLoader;
  * @see ClassLoader
  *
  * @author Raphael Antonmattei <rantonmattei@theorchard.com>
+ * @author Matthew Gamble
  */
 class LoggerLoader
 {
     /**
      * Array of options
+     *
      * @var array
      */
     protected $loggerOptions = array();
 
     /**
      * Array of handlers
+     *
      * @var Monolog\Handler\HandlerInterface[]
      */
     protected $handlers = array();
 
     /**
      * Array of processors
+     *
      * @var callable[]
      */
     protected $processors = array();
 
     /**
      * Logger
+     *
      * @var Monolog\Logger
      */
     protected $logger = null;
@@ -50,7 +55,7 @@ class LoggerLoader
      * Constructor
      *
      * @param string $loggerName Name of the logger
-     * @param array  $loggerOptions Array of logger options
+     * @param array $loggerOptions Array of logger options
      * @param Monolog\Handler\HandlerInterface[] $handlers Array of Monolog handlers
      * @param callable[] $processors Array of processors
      */
@@ -72,11 +77,10 @@ class LoggerLoader
      * Resolve handlers for that Logger (if any provided) against an array of previously set
      * up handlers. Returns an array of valid handlers.
      *
-     * @throws InvalidArgumentException if a requested handler is not available in $handlers
-     *
-     * @param  array $loggerOptions array of logger options
-     * @param  Monolog\Handler\HandlerInterface[] $handlers Available Handlers to resolve against
+     * @param array $loggerOptions An array of logger options
+     * @param Monolog\Handler\HandlerInterface[] $handlers Available Handlers to resolve against
      * @return Monolog\Handler\HandlerInterface[] Array of Monolog handlers
+     * @throws InvalidArgumentException if a requested handler is not available in $handlers
      */
     public function resolveHandlers(array $loggerOptions, array $handlers)
     {
@@ -101,7 +105,6 @@ class LoggerLoader
         }
 
         // If nothing is set there is nothing to resolve, Handlers will be Monolog's default
-
         return $handlerArray;
     }
 
@@ -109,11 +112,10 @@ class LoggerLoader
      * Resolve processors for that Logger (if any provided) against an array of previously set
      * up processors.
      *
-     * @throws InvalidArgumentException if a requested processor is not available in $processors
-     *
-     * @param  array $loggerOptions array of logger options
-     * @param  callable[] $processors Available Processors to resolve against
+     * @param array $loggerOptions An array of logger options
+     * @param callable[] $processors Available Processors to resolve against
      * @return callable[] Array of Monolog processors
+     * @throws InvalidArgumentException if a requested processor is not available in $processors
      */
     public function resolveProcessors(array $loggerOptions, $processors)
     {
@@ -138,7 +140,6 @@ class LoggerLoader
         }
 
         // If nothing is set there is nothing to resolve, Processors will be Monolog's default
-
         return $processorArray;
     }
 
@@ -147,7 +148,7 @@ class LoggerLoader
      *
      * @param Monolog\Handler\HandlerInterface[] Array of Monolog handlers
      */
-    private function addHandlers(array $handlers)
+    protected function addHandlers(array $handlers)
     {
         // We need to reverse the array because Monolog "pushes" handlers to top of the stack
         foreach (array_reverse($handlers) as $handler) {
@@ -160,7 +161,7 @@ class LoggerLoader
      *
      * @param callable[] Array of Monolog processors
      */
-    private function addProcessors(array $processors)
+    protected function addProcessors(array $processors)
     {
         // We need to reverse the array because Monolog "pushes" processors to top of the stack
         foreach (array_reverse($processors) as $processor) {

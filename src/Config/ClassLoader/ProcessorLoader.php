@@ -20,11 +20,11 @@ use MattyG\MonologCascade\Config\ClassLoader;
  * @see ClassLoader
  *
  * @author Kate Burdon <kburdon@tableau.com>
+ * @author Matthew Gamble
  */
 class ProcessorLoader extends ClassLoader
 {
     /**
-     * Constructor
      * @see ClassLoader::__construct
      * @see Monolog\Handler classes for handler options
      *

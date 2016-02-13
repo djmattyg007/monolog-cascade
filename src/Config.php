@@ -20,52 +20,50 @@ use Monolog\Handler\HandlerInterface;
 use Monolog\Registry;
 
 /**
- * Config class that takes a config resource (file, JSON, Yaml, etc.) and configure Loggers with
+ * Config class that takes an array of configuration and configures Loggers with
  * all the required options (Formatters, Handlers, etc.)
  *
  * @author Raphael Antonmattei <rantonmattei@theorchard.com>
+ * @author Matthew Gamble
  */
 class Config
 {
     /**
-     * Input from user. This is either a file path, a string or an array
-     * @var string | array
-     */
-    protected $input = null;
-
-    /**
      * Array of logger configuration options: (logger attributes, formatters, handlers, etc.)
+     *
      * @var array
      */
     protected $options = array();
 
     /**
      * Array of Formatter objects
+     *
      * @var FormatterInterface[]
      */
     protected $formatters = array();
 
     /**
      * Array of Handler objects
+     *
      * @var HandlerInterface[]
      */
     protected $handlers = array();
 
     /**
      * Array of Processor objects
+     *
      * @var callable[]
      */
     protected $processors = array();
 
     /**
      * Array of logger objects
+     *
      * @var \Monolog\Logger[]
      */
     protected $loggers = array();
 
     /**
-     * Instantiate a Config object
-     *
      * @param array $options
      */
     public function __construct(array $options)
@@ -74,7 +72,7 @@ class Config
     }
 
     /**
-     * Configure and register Logger(s) according to the options passed in
+     * Configure and register Logger(s) according to the options passed in.
      */
     public function configure()
     {
@@ -109,8 +107,9 @@ class Config
     }
 
     /**
-     * Configure the formatters
-     * @param  array $formatters array of formatter options
+     * Configure all formatters
+     *
+     * @param array $formatters An array of formatter options
      */
     protected function configureFormatters(array $formatters = array())
     {
@@ -121,8 +120,9 @@ class Config
     }
 
     /**
-     * Configure the handlers
-     * @param  array $handlers array of handler options
+     * Configure all handlers
+     *
+     * @param array $handlers An array of handler options
      */
     protected function configureHandlers(array $handlers)
     {
@@ -133,9 +133,9 @@ class Config
     }
 
     /**
-     * Configure the processors
+     * Configure all processors
      *
-     * @param  array $processors array of processor options
+     * @param array $processors An array of processor options
      */
     protected function configureProcessors(array $processors)
     {
@@ -146,9 +146,9 @@ class Config
     }
 
     /**
-     * Configure the loggers
+     * Configure all loggers
      *
-     * @param  array $loggers array of logger options
+     * @param array $loggers An array of logger options
      */
     protected function configureLoggers(array $loggers)
     {
