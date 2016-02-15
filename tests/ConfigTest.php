@@ -18,7 +18,6 @@ use MattyG\MonologCascade\Config\ClassLoader\HandlerLoader;
 use MattyG\MonologCascade\Tests\Fixtures;
 use Monolog\Handler\HandlerInterface;
 use Monolog\Formatter\FormatterInterface;
-use Monolog\Formatter\LineFormatter;
 use Monolog\Logger;
 use Monolog\Registry;
 
@@ -116,7 +115,7 @@ class ConfigTest extends \PHPUnit_Framework_TestCase
         $configurer = new Config($options, $this->loggerFactory);
         $testMethod = $this->getNonPublicMethod(get_class($configurer), "configureHandlers");
         // Get mock implementations of all formatters so they can be resolved for handlers that require them.
-        $formatters = $this->buildFormattersForHandlers($options["formatters"]);
+        $formatters = $this->buildFormatters($options["formatters"]);
         $hOptions = $options["handlers"];
         $handlers = $testMethod->invokeArgs($configurer, array($hOptions, $formatters));
 
@@ -124,18 +123,44 @@ class ConfigTest extends \PHPUnit_Framework_TestCase
         $this->assertArrayHasKeys($handlerIds, $handlers);
 
         foreach ($handlerIds as $handlerId) {
+            // Make sure the handler is of the correct type
             $this->assertObjectIsConfiguredClassOrDefault($handlerId, $handlers, $hOptions, HandlerLoader::DEFAULT_CLASS);
+            // Make sure the formatter assigned to the handler is the exact same mock we created
+            $this->assertSame($formatters[$hOptions[$handlerId]["formatter"]], $handlers[$handlerId]->getFormatter());
         }
         $this->assertContainsOnlyInstancesOf(HandlerInterface::class, $handlers);
     }
 
+    public function testConfigureLoggers()
+    {
+        $options = Fixtures::getArrayConfig();
+        $configurer = new Config($options, $this->loggerFactory);
+        $testMethod = $this->getNonPublicMethod(get_class($configurer), "configureLoggers");
+        // Get mock implementations of all handlers so they can be resolved for loggers that require them.
+        $handlers = $this->buildHandlers($options["handlers"]);
+        $lOptions = $options["loggers"];
+        $loggers = $testMethod->invokeArgs($configurer, array($lOptions, $handlers, array()));
+
+        $loggerIds = array("my_logger");
+        $this->assertArrayHasKeys($loggerIds, $loggers);
+
+        foreach ($loggerIds as $loggerId) {
+            // Make sure the handlers assigned to the logger are the exact same mock we created
+            $lHandlers = $loggers[$loggerId]->getHandlers();
+            foreach ($lOptions[$loggerId]["handlers"] as $key => $lHandlerId) {
+                $this->assertSame($lHandlers[$key], $handlers[$lHandlerId]);
+            }
+        }
+        $this->assertContainsOnlyInstancesOf(Logger::class, $loggers);
+    }
+
     /**
      * @param array $formatterConfiguration
-     * @return \Monolog\Formatter\FormatterInterface[]
+     * @return FormatterInterface[]
      */
-    protected function buildFormattersForHandlers(array $formatterConfiguration)
+    protected function buildFormatters(array $formatterConfiguration)
     {
-        // Handlers shouldn't care what formatter is used as long as it implements the FormatterInterface.
+        // Handlers shouldn't care what formatter is used as long as it implements FormatterInterface.
         $mock = $this->getMockBuilder(FormatterInterface::class)->getMock();
         $mock->method("format")->will($this->returnCallback("json_encode"));
         $mock->method("formatBatch")->will($this->returnCallback("json_encode"));
@@ -145,6 +170,22 @@ class ConfigTest extends \PHPUnit_Framework_TestCase
             $formatters[$formatterId] = clone $mock;
         }
         return $formatters;
+    }
+
+    /**
+     * @param array $handlerConfiguration
+     * @retun HandlerInterface[]
+     */
+    protected function buildHandlers(array $handlerConfiguration)
+    {
+        // Loggers shouldn't care what handler is used as long as it implements HandlerInterface.
+        $mock = $this->getMock(HandlerInterface::class);
+
+        $handlers = array();
+        foreach ($handlerConfiguration as $handlerId => $handlerOptions) {
+            $handlers[$handlerId] = clone $mock;
+        }
+        return $handlers;
     }
 
     /**
