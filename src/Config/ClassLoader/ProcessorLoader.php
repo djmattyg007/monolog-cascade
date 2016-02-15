@@ -30,6 +30,7 @@ class ProcessorLoader extends ClassLoader
      *
      * @param array $processorOptions Processor options
      * @param Monolog\Processor\ProcessorInterface[] $processors Array of processors to pick from
+     * TODO: Check whether or not $processorOptions needs to be passed by reference
      */
     public function __construct(array &$processorOptions, array $processors = array())
     {

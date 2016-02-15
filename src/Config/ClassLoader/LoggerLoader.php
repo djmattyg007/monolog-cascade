@@ -12,11 +12,11 @@
 namespace MattyG\MonologCascade\Config\ClassLoader;
 
 use MattyG\MonologCascade\Cascade;
-use MattyG\MonologCascade\Config\ClassLoader;
+use MattyG\MonologCascade\Monolog\LoggerFactory;
+use Monolog\Logger;
 
 /**
  * Logger Loader. Instantiate a Logger and set passed in handlers and processors if any
- * @see ClassLoader
  *
  * @author Raphael Antonmattei <rantonmattei@theorchard.com>
  * @author Matthew Gamble
@@ -24,11 +24,9 @@ use MattyG\MonologCascade\Config\ClassLoader;
 class LoggerLoader
 {
     /**
-     * Array of options
-     *
-     * @var array
+     * @var LoggerFactory
      */
-    protected $loggerOptions = array();
+    protected $loggerFactory;
 
     /**
      * Array of handlers
@@ -45,32 +43,18 @@ class LoggerLoader
     protected $processors = array();
 
     /**
-     * Logger
-     *
-     * @var Monolog\Logger
-     */
-    protected $logger = null;
-
-    /**
-     * Constructor
-     *
-     * @param string $loggerName Name of the logger
-     * @param array $loggerOptions Array of logger options
+     * @param LoggerFactory $loggerFactory
      * @param Monolog\Handler\HandlerInterface[] $handlers Array of Monolog handlers
      * @param callable[] $processors Array of processors
      */
     public function __construct(
-        $loggerName,
-        array $loggerOptions = array(),
+        LoggerFactory $loggerFactory,
         array $handlers = array(),
         array $processors = array()
     ) {
-        $this->loggerOptions = $loggerOptions;
+        $this->loggerFactory = $loggerFactory;
         $this->handlers = $handlers;
         $this->processors = $processors;
-
-        // This instanciates a Logger object and set it to the Registry
-        $this->logger = Cascade::getLogger($loggerName);
     }
 
     /**
@@ -97,7 +81,7 @@ class LoggerLoader
                         sprintf(
                             'Cannot add handler "%s" to the logger "%s". Handler not found.',
                             $handlerId,
-                            $this->logger->getName()
+                            $loggerOptions["name"]
                         )
                     );
                 }
@@ -132,7 +116,7 @@ class LoggerLoader
                         sprintf(
                             'Cannot add processor "%s" to the logger "%s". Processor not found.',
                             $processorId,
-                            $this->logger->getName()
+                            $loggerOptions["name"]
                         )
                     );
                 }
@@ -144,41 +128,33 @@ class LoggerLoader
     }
 
     /**
-     * Add handlers to the Logger
-     *
-     * @param Monolog\Handler\HandlerInterface[] Array of Monolog handlers
-     */
-    protected function addHandlers(array $handlers)
-    {
-        // We need to reverse the array because Monolog "pushes" handlers to top of the stack
-        foreach (array_reverse($handlers) as $handler) {
-            $this->logger->pushHandler($handler);
-        }
-    }
-
-    /**
      * Add processors to the Logger
      *
+     * @param Logger $logger
      * @param callable[] Array of Monolog processors
      */
-    protected function addProcessors(array $processors)
+    protected function addProcessors(Logger $logger, array $processors)
     {
         // We need to reverse the array because Monolog "pushes" processors to top of the stack
         foreach (array_reverse($processors) as $processor) {
-            $this->logger->pushProcessor($processor);
+            $logger->pushProcessor($processor);
         }
     }
 
     /**
      * Return the instantiated Logger object based on its name
      *
-     * @return Monolog\Logger Logger object
+     * @param string $name The name of the logging channel being created
+     * @param array $loggerOptions
+     * @return Logger Logger object
      */
-    public function load()
+    public function load($name, array $loggerOptions = array())
     {
-        $this->addHandlers($this->resolveHandlers($this->loggerOptions, $this->handlers));
-        $this->addProcessors($this->resolveProcessors($this->loggerOptions, $this->processors));
+        $logger = $this->loggerFactory->create($name);
+        $loggerOptions["name"] = $name;
+        $logger->setHandlers($this->resolveHandlers($loggerOptions, $this->handlers));
+        $this->addProcessors($logger, $this->resolveProcessors($loggerOptions, $this->processors));
 
-        return $this->logger;
+        return $logger;
     }
 }

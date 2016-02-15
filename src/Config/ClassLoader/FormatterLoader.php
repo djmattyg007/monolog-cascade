@@ -17,7 +17,6 @@ use MattyG\MonologCascade\Config\ClassLoader;
  * Formatter Loader. Loads the Formatter options, validate them and instantiates
  * a Formatter object (implementing Monolog\Formatter\FormatterInterface) with all
  * the corresponding options
- * @see ClassLoader
  *
  * @author Raphael Antonmattei <rantonmattei@theorchard.com>
  * @author Matthew Gamble
@@ -30,7 +29,6 @@ class FormatterLoader extends ClassLoader
     const DEFAULT_CLASS = '\Monolog\Formatter\LineFormatter';
 
     /**
-     * @see ClassLoader::__construct
      * @see Monolog\Formatter classes for formatter options
      *
      * @param array $formatterOptions Formatter options

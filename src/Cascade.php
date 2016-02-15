@@ -12,8 +12,8 @@
 namespace MattyG\MonologCascade;
 
 use MattyG\MonologCascade\Config;
+use MattyG\MonologCascade\Monolog\LoggerFactory;
 use Monolog\Handler\HandlerInterface;
-use Monolog\Logger;
 use Monolog\Registry;
 
 /**
@@ -28,33 +28,11 @@ use Monolog\Registry;
 class Cascade
 {
     /**
-     * Config class that holds options for all registered loggers.
-     * This is optional, you can set up your loggers programmatically.
-     *
-     * @var Config
+     * @var array
      */
-    protected static $config = null;
-
-    /**
-     * Create a new Logger object and push it to the registry
-     *
-     * @see Monolog\Logger::__construct
-     *
-     * @param string $name The logging channel
-     * @param HandlerInterface[] $handlers Optional stack of handlers, the first one in the array is called first, etc.
-     * @param callable[] $processors Optional array of processors
-     * @return Logger A newly created Logger
-     */
-    public static function createLogger(
-        $name,
-        array $handlers = array(),
-        array $processors = array()
-    ) {
-        $logger = new Logger($name, $handlers, $processors);
-        Registry::addLogger($logger);
-
-        return $logger;
-    }
+    protected static $defaultOptions = array(
+        "disable_existing_loggers" => true,
+    );
 
     /**
      * Get a Logger instance by name. Creates a new one if a Logger with the
@@ -65,7 +43,7 @@ class Cascade
      */
     public static function getLogger($name)
     {
-        return Registry::hasLogger($name) ? Registry::getInstance($name) : self::createLogger($name);
+        return Registry::getInstance($name);
     }
 
     /**
@@ -81,23 +59,24 @@ class Cascade
     }
 
     /**
-     * Return the config options
-     *
-     * @return Config
-     */
-    public static function getConfig()
-    {
-        return self::$config;
-    }
-
-    /**
      * Load configuration options from a file or a string
      *
      * @param array The array of configuration
+     * @param LoggerFactory|null $loggerFactory
      */
-    public static function configure(array $config)
+    public static function configure(array $config, $loggerFactory = null)
     {
-        self::$config = new Config($config);
-        self::$config->configure();
+        $options = array_merge(static::$defaultOptions, isset($config["options"]) ? $config["options"] : array());
+        unset($config["options"]);
+
+        $configurer = new Config($config, $loggerFactory ?: new LoggerFactory());
+        $loggers = $configurer->configure();
+
+        if ($options["disable_existing_loggers"] === true) {
+            Registry::clear();
+        }
+        foreach ($loggers as $logger) {
+            Registry::addLogger($logger);
+        }
     }
 }

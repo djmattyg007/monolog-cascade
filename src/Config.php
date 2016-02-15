@@ -11,6 +11,7 @@
  */
 namespace MattyG\MonologCascade;
 
+use MattyG\MonologCascade\Monolog\LoggerFactory;
 use MattyG\MonologCascade\Config\ClassLoader\FormatterLoader;
 use MattyG\MonologCascade\Config\ClassLoader\HandlerLoader;
 use MattyG\MonologCascade\Config\ClassLoader\LoggerLoader;
@@ -29,76 +30,54 @@ use Monolog\Registry;
 class Config
 {
     /**
-     * Array of logger configuration options: (logger attributes, formatters, handlers, etc.)
+     * Array of logger configuration
      *
      * @var array
      */
-    protected $options = array();
+    protected $configuration = array();
 
     /**
-     * Array of Formatter objects
-     *
-     * @var FormatterInterface[]
+     * @var LoggerFactory
      */
-    protected $formatters = array();
-
-    /**
-     * Array of Handler objects
-     *
-     * @var HandlerInterface[]
-     */
-    protected $handlers = array();
-
-    /**
-     * Array of Processor objects
-     *
-     * @var callable[]
-     */
-    protected $processors = array();
-
-    /**
-     * Array of logger objects
-     *
-     * @var \Monolog\Logger[]
-     */
-    protected $loggers = array();
+    protected $loggerFactory;
 
     /**
      * @param array $options
+     * @param LoggerFactory $loggerFactory
      */
-    public function __construct(array $options)
+    public function __construct(array $options, LoggerFactory $loggerFactory)
     {
-        $this->options = $options;
+        $this->configuration = $options;
+        $this->loggerFactory = $loggerFactory;
     }
 
     /**
      * Configure and register Logger(s) according to the options passed in.
+     *
+     * @return \Monolog\Logger[]
      */
     public function configure()
     {
-        if (!isset($this->options['disable_existing_loggers'])) {
-            // We disable any existing loggers by default
-            $this->options['disable_existing_loggers'] = true;
+        if (isset($this->configuration['formatters'])) {
+            $formatters = $this->configureFormatters($this->configuration['formatters']);
+        } else {
+            $formatters = array();
         }
 
-        if ($this->options['disable_existing_loggers']) {
-            Registry::clear();
+        if (isset($this->configuration['processors'])) {
+            $processors = $this->configureProcessors($this->configuration['processors']);
+        } else {
+            $processors = array();
         }
 
-        if (isset($this->options['formatters'])) {
-            $this->configureFormatters($this->options['formatters']);
+        if (isset($this->configuration['handlers'])) {
+            $handlers = $this->configureHandlers($this->configuration['handlers']);
+        } else {
+            $handlers = array();
         }
 
-        if (isset($this->options['processors'])) {
-            $this->configureProcessors($this->options['processors']);
-        }
-
-        if (isset($this->options['handlers'])) {
-            $this->configureHandlers($this->options['handlers']);
-        }
-
-        if (isset($this->options['loggers'])) {
-            $this->configureLoggers($this->options['loggers']);
+        if (isset($this->configuration['loggers'])) {
+            return $this->configureLoggers($this->configuration['loggers'], $handlers, $processors);
         } else {
             throw new \RuntimeException(
                 'Cannot configure loggers. No logger configuration options provided.'
@@ -109,52 +88,67 @@ class Config
     /**
      * Configure all formatters
      *
-     * @param array $formatters An array of formatter options
+     * @param array $formatterConfiguration An array of formatter options
      */
-    protected function configureFormatters(array $formatters = array())
+    protected function configureFormatters(array $formatterConfiguration = array())
     {
-        foreach ($formatters as $formatterId => $formatterOptions) {
+        $formatters = array();
+        foreach ($formatterConfiguration as $formatterId => $formatterOptions) {
             $formatterLoader = new FormatterLoader($formatterOptions);
-            $this->formatters[$formatterId] = $formatterLoader->load();
+            $formatters[$formatterId] = $formatterLoader->load();
         }
+        return $formatters;
+    }
+
+    /**
+     * Configure all processors
+     *
+     * @param array $processorConfiguration An array of processor options
+     * @return callable[]
+     */
+    protected function configureProcessors(array $processorConfiguration)
+    {
+        $processors = array();
+        foreach ($processorConfiguration as $processorName => $processorOptions) {
+            $processorLoader = new ProcessorLoader($processorOptions, $processors);
+            $processors[$processorName] = $processorLoader->load();
+        }
+        return $processors;
     }
 
     /**
      * Configure all handlers
      *
      * @param array $handlers An array of handler options
+     * @param array $formatters An array of all configured formatters
+     * @param array $processors An array of all configured processors
+     * @return HandlerInterface[]
      */
-    protected function configureHandlers(array $handlers)
+    protected function configureHandlers(array $handlerConfiguration, $formatters = array(), $processors = array())
     {
-        foreach ($handlers as $handlerId => $handlerOptions) {
-            $handlerLoader = new HandlerLoader($handlerOptions, $this->formatters, $this->processors);
-            $this->handlers[$handlerId] = $handlerLoader->load();
+        $handlers = array();
+        foreach ($handlerConfiguration as $handlerId => $handlerOptions) {
+            $handlerLoader = new HandlerLoader($handlerOptions, $formatters, $processors);
+            $handlers[$handlerId] = $handlerLoader->load();
         }
-    }
-
-    /**
-     * Configure all processors
-     *
-     * @param array $processors An array of processor options
-     */
-    protected function configureProcessors(array $processors)
-    {
-        foreach ($processors as $processorName => $processorOptions) {
-            $processorLoader = new ProcessorLoader($processorOptions, $this->processors);
-            $this->processors[$processorName] = $processorLoader->load();
-        }
+        return $handlers;
     }
 
     /**
      * Configure all loggers
      *
      * @param array $loggers An array of logger options
+     * @param HandlerInterface[] $handlers
+     * @param callable[] $processors
+     * @return \Monolog\Logger[]
      */
-    protected function configureLoggers(array $loggers)
+    protected function configureLoggers(array $loggerConfiguration, array $handlers, array $processors)
     {
-        foreach ($loggers as $loggerName => $loggerOptions) {
-            $loggerLoader = new LoggerLoader($loggerName, $loggerOptions, $this->handlers, $this->processors);
-            $this->loggers[$loggerName] = $loggerLoader->load();
+        $loggerLoader = new LoggerLoader($this->loggerFactory, $handlers, $processors);
+        $loggers = array();
+        foreach ($loggerConfiguration as $loggerName => $loggerOptions) {
+            $loggers[$loggerName] = $loggerLoader->load($loggerName, $loggerOptions);
         }
+        return $loggers;
     }
 }
