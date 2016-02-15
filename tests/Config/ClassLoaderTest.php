@@ -26,14 +26,6 @@ use Monolog\Registry;
 class ClassLoaderTest extends \PHPUnit_Framework_TestCase
 {
     /**
-     * Set up function
-     */
-    public function setUp()
-    {
-        parent::setUp();
-    }
-
-    /**
      * Tear down function
      */
     public function tearDown()
@@ -44,9 +36,10 @@ class ClassLoaderTest extends \PHPUnit_Framework_TestCase
 
     /**
      * Provides options with and without a class param
+     *
      * @return array of args
      */
-    public function dataFortestSetClass()
+    public function dataForTestSetClass()
     {
         return array(
             array(
@@ -68,8 +61,8 @@ class ClassLoaderTest extends \PHPUnit_Framework_TestCase
     /**
      * Testing the setClass method
      *
-     * @param  array $options array of options
-     * @dataProvider dataFortestSetClass
+     * @param array $options array of options
+     * @dataProvider dataForTestSetClass
      */
     public function testSetClass($options, $expectedClass)
     {

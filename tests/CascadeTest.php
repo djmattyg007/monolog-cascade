@@ -17,9 +17,8 @@ use Monolog\Logger;
 use Monolog\Registry;
 
 /**
- * Class CascadeTest
- *
  * @author Raphael Antonmattei <rantonmattei@theorchard.com>
+ * @author Matthew Gamble
  */
 class CascadeTest extends \PHPUnit_Framework_TestCase
 {
@@ -27,25 +26,6 @@ class CascadeTest extends \PHPUnit_Framework_TestCase
     {
         Registry::clear();
         parent::teardown();
-    }
-
-    public function testCreateLogger()
-    {
-        $logger = Cascade::createLogger('test');
-
-        $this->assertTrue($logger instanceof Logger);
-        $this->assertEquals('test', $logger->getName());
-        $this->assertTrue(Registry::hasLogger('test'));
-    }
-
-    public function testRegistry()
-    {
-        // Creates the logger and push it to the registry
-        $logger = Cascade::logger('test');
-
-        // We should get the logger from the registry this time
-        $logger2 = Cascade::logger('test');
-        $this->assertSame($logger, $logger2);
     }
 
     /**
@@ -56,10 +36,10 @@ class CascadeTest extends \PHPUnit_Framework_TestCase
         $logger = Cascade::getLogger(null);
     }
 
-    public function testFileConfig()
+    public function testConfigure()
     {
-        $options = Fixtures::getPhpArrayConfig();
-        Cascade::fileConfig($options);
-        $this->assertInstanceOf(\MattyG\MonologCascade\Config::class, Cascade::getConfig());
+        $options = Fixtures::getArrayConfig();
+        Cascade::configure($options);
+        $this->assertInstanceOf(Logger::class, Cascade::getLogger("my_logger"));
     }
 }

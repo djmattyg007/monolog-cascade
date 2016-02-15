@@ -12,6 +12,7 @@
 namespace MattyG\MonologCascade\Tests\Config\ClassLoader;
 
 use MattyG\MonologCascade\Config\ClassLoader\LoggerLoader;
+use MattyG\MonologCascade\Monolog\LoggerFactory;
 use Monolog\Handler\TestHandler;
 use Monolog\Logger;
 use Monolog\Registry;
@@ -24,31 +25,38 @@ use Monolog\Registry;
 class LoggerLoaderTest extends \PHPUnit_Framework_TestCase
 {
     /**
-     * Tear down function
+     * @var LoggerLoader
      */
+    protected $loggerFactory;
+
+    public function setUp()
+    {
+        $this->loggerFactory = new LoggerFactory();
+        parent::setUp();
+    }
+
     public function tearDown()
     {
+        $this->loggerFactory = null;
         parent::tearDown();
-        Registry::clear();
     }
 
     public function testConstructor()
     {
-        $loader = new LoggerLoader('testLogger');
-
-        $this->assertTrue(Registry::hasLogger('testLogger'));
+        $loader = new LoggerLoader($this->loggerFactory);
     }
 
     public function testResolveHandlers()
     {
         $options = array(
-            'handlers' => array('test_handler_1', 'test_handler_2')
+            "handlers" => array("test_handler_1", "test_handler_2"),
+            "name" => "testLogger",
         );
         $handlers = array(
-            'test_handler_1' => new TestHandler(),
-            'test_handler_2' => new TestHandler()
+            "test_handler_1" => new TestHandler(),
+            "test_handler_2" => new TestHandler(),
         );
-        $loader = new LoggerLoader('testLogger', $options, $handlers);
+        $loader = new LoggerLoader($this->loggerFactory, $handlers);
 
         $this->assertEquals(
             array_values($handlers),
@@ -62,13 +70,14 @@ class LoggerLoaderTest extends \PHPUnit_Framework_TestCase
     public function testResolveHandlersWithMismatch()
     {
         $options = array(
-            'handlers' => array('unexisting_handler', 'test_handler_2')
+            "handlers" => array("nonexisting_handler", "test_handler_2"),
+            "name" => "testLogger",
         );
         $handlers = array(
-            'test_handler_1' => new TestHandler(),
-            'test_handler_2' => new TestHandler()
+            "test_handler_1" => new TestHandler(),
+            "test_handler_2" => new TestHandler(),
         );
-        $loader = new LoggerLoader('testLogger', $options, $handlers);
+        $loader = new LoggerLoader($this->loggerFactory, $handlers);
 
         // This should throw an InvalidArgumentException
         $loader->resolveHandlers($options, $handlers);
@@ -76,18 +85,19 @@ class LoggerLoaderTest extends \PHPUnit_Framework_TestCase
 
     public function testResolveProcessors()
     {
-        $dummyClosure = function () {
+        $dummyClosure = function() {
             // Empty function
         };
         $options = array(
-            'processors' => array('test_processor_1', 'test_processor_2')
+            "processors" => array("test_processor_1", "test_processor_2"),
+            "name" => "testLogger",
         );
         $processors = array(
-            'test_processor_1' => $dummyClosure,
-            'test_processor_2' => $dummyClosure
+            "test_processor_1" => $dummyClosure,
+            "test_processor_2" => $dummyClosure,
         );
 
-        $loader = new LoggerLoader('testLogger', $options, array(), $processors);
+        $loader = new LoggerLoader($this->loggerFactory, array(), $processors);
 
         $this->assertEquals(
             array_values($processors),
@@ -100,18 +110,18 @@ class LoggerLoaderTest extends \PHPUnit_Framework_TestCase
      */
     public function testResolveProcessorsWithMismatch()
     {
-        $dummyClosure = function () {
+        $dummyClosure = function() {
             // Empty function
         };
         $options = array(
-            'processors' => array('unexisting_processor', 'test_processor_2')
+            "processors" => array("nonexisting_processor", "test_processor_2"),
+            "name" => "testLogger",
         );
         $processors = array(
-            'test_processor_1' => $dummyClosure,
-            'test_processor_2' => $dummyClosure
+            "test_processor_1" => $dummyClosure,
+            "test_processor_2" => $dummyClosure,
         );
-
-        $loader = new LoggerLoader('testLogger', $options, array(), $processors);
+        $loader = new LoggerLoader($this->loggerFactory, array(), $processors);
 
         // This should throw an InvalidArgumentException
         $loader->resolveProcessors($options, $processors);
@@ -120,23 +130,23 @@ class LoggerLoaderTest extends \PHPUnit_Framework_TestCase
     public function testLoad()
     {
         $options = array(
-            'handlers' => array('test_handler_1', 'test_handler_2'),
-            'processors' => array('test_processor_1', 'test_processor_2')
+            "handlers" => array("test_handler_1", "test_handler_2"),
+            "processors" => array("test_processor_1", "test_processor_2"),
         );
         $handlers = array(
-            'test_handler_1' => new TestHandler(),
-            'test_handler_2' => new TestHandler()
+            "test_handler_1" => new TestHandler(),
+            "test_handler_2" => new TestHandler(),
         );
-        $dummyClosure = function () {
+        $dummyClosure = function() {
             // Empty function
         };
         $processors = array(
-            'test_processor_1' => $dummyClosure,
-            'test_processor_2' => $dummyClosure
+            "test_processor_1" => $dummyClosure,
+            "test_processor_2" => $dummyClosure,
         );
 
-        $loader = new LoggerLoader('testLogger', $options, $handlers, $processors);
-        $logger = $loader->load();
+        $loader = new LoggerLoader($this->loggerFactory, $handlers, $processors);
+        $logger = $loader->load("testLogger", $options);
 
         $this->assertTrue($logger instanceof Logger);
         $this->assertEquals(array_values($handlers), $logger->getHandlers());

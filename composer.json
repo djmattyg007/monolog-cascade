@@ -22,8 +22,8 @@
     },
     "require-dev": {
         "mikey179/vfsStream": "~1.6",
-        "phpunit/phpcov": "~2.0",
-        "phpunit/phpunit": "~4.8",
+        "phpunit/phpcov": "~3.0",
+        "phpunit/phpunit": "~5.2",
         "satooshi/php-coveralls": "~1.0",
         "squizlabs/php_codesniffer": "~2.5"
     },

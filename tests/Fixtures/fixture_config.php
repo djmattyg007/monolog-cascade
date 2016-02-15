@@ -15,10 +15,15 @@ $fixtureArray = array(
     'formatters' => array(
         'spaced' => array(
             'format' => "%datetime% %channel%.%level_name%  %message%\n",
-            'includeStacktraces' => true
+            'includeStacktraces' => true,
         ),
         'dashed' => array(
-            'format' => "%datetime%-%channel%.%level_name% - %message%\n"
+            'format' => "%datetime%-%channel%.%level_name% - %message%\n",
+        ),
+    ),
+    'processors' => array(
+        'tag_processor' => array(
+            'class' => 'Monolog\Processor\TagProcessor',
         ),
     ),
     'handlers' => array(
@@ -26,31 +31,24 @@ $fixtureArray = array(
             'class' => 'Monolog\Handler\StreamHandler',
             'level' => 'DEBUG',
             'formatter' => 'spaced',
-            'stream' => 'php://stdout'
+            'stream' => 'php://stdout',
         ),
-
         'info_file_handler' => array(
             'class' => 'Monolog\Handler\StreamHandler',
             'level' => 'INFO',
             'formatter' => 'dashed',
-            'stream' => './demo_info.log'
+            'stream' => './demo_info.log',
         ),
-
         'error_file_handler' => array(
             'class' => 'Monolog\Handler\StreamHandler',
             'level' => 'ERROR',
+            'formatter' => 'spaced',
             'stream' => './demo_error.log',
-            'formatter' => 'spaced'
-        )
-    ),
-    'processors' => array(
-        'tag_processor' => array(
-            'class' => 'Monolog\Processor\TagProcessor'
-        )
+        ),
     ),
     'loggers' => array(
         'my_logger' => array(
-            'handlers' => array('console', 'info_file_handler')
-        )
-    )
+            'handlers' => array('console', 'info_file_handler'),
+        ),
+    ),
 );

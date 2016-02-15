@@ -151,7 +151,7 @@ class LoggerLoader
     public function load($name, array $loggerOptions = array())
     {
         $logger = $this->loggerFactory->create($name);
-        $loggerOptions["name"] = $name;
+        $loggerOptions["name"] = $name; // Cheap hack to ensure logger name appears in exception message should one occur
         $logger->setHandlers($this->resolveHandlers($loggerOptions, $this->handlers));
         $this->addProcessors($logger, $this->resolveProcessors($loggerOptions, $this->processors));
 

@@ -58,29 +58,29 @@ class Config
      */
     public function configure()
     {
-        if (isset($this->configuration['formatters'])) {
-            $formatters = $this->configureFormatters($this->configuration['formatters']);
+        if (isset($this->configuration["formatters"])) {
+            $formatters = $this->configureFormatters($this->configuration["formatters"]);
         } else {
             $formatters = array();
         }
 
-        if (isset($this->configuration['processors'])) {
-            $processors = $this->configureProcessors($this->configuration['processors']);
+        if (isset($this->configuration["processors"])) {
+            $processors = $this->configureProcessors($this->configuration["processors"]);
         } else {
             $processors = array();
         }
 
-        if (isset($this->configuration['handlers'])) {
-            $handlers = $this->configureHandlers($this->configuration['handlers']);
+        if (isset($this->configuration["handlers"])) {
+            $handlers = $this->configureHandlers($this->configuration["handlers"], $formatters, $processors);
         } else {
             $handlers = array();
         }
 
-        if (isset($this->configuration['loggers'])) {
-            return $this->configureLoggers($this->configuration['loggers'], $handlers, $processors);
+        if (isset($this->configuration["loggers"])) {
+            return $this->configureLoggers($this->configuration["loggers"], $handlers, $processors);
         } else {
             throw new \RuntimeException(
-                'Cannot configure loggers. No logger configuration options provided.'
+                "Cannot configure loggers. No logger configuration options provided."
             );
         }
     }

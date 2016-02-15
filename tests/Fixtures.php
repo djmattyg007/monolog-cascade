@@ -14,26 +14,29 @@ namespace MattyG\MonologCascade\Tests;
 class Fixtures
 {
     /**
-     * Return the fixture directory
-     * @return string ficture directory
+     * Return the fixture directory.
+     *
+     * @return string Fixture directory
      */
     public static function fixtureDir()
     {
-        return realpath(__DIR__.'/Fixtures');
+        return realpath(__DIR__ . "/Fixtures");
     }
 
     /**
-     * Return a path to a non existing file
-     * @return string wrong file path
+     * Return a path to a non existing file.
+     *
+     * @return string Wrong file path
      */
     public static function getInvalidFile()
     {
-        return 'some/non/existing/file.txt';
+        return "some/non/existing/file.txt";
     }
 
     /**
-     * Return a sample string
-     * @return string sample string
+     * Return a sample string.
+     *
+     * @return string Sample string
      */
     public static function getSampleString()
     {
@@ -41,19 +44,21 @@ class Fixtures
     }
 
     /**
-     * Return a config array
-     * @return array config array
+     * Return a config array.
+     *
+     * @return array Config array
      */
-    public static function getPhpArrayConfig()
+    public static function getArrayConfig()
     {
-        require self::fixtureDir().'/fixture_config.php';
+        require self::fixtureDir() . "/fixture_config.php";
 
         return $fixtureArray;
     }
 
     /**
-     * Return a sample array
-     * @return array sample array
+     * Return a sample array.
+     *
+     * @return array Sample array
      */
     public static function getSamplePhpArray()
     {
