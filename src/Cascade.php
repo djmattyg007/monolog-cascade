@@ -25,7 +25,7 @@ use Monolog\Registry;
  * @see \Monolog\Logger
  * @see \Monolog\Registry
  */
-class Cascade
+class Cascade extends Registry
 {
     /**
      * @var array
@@ -43,7 +43,7 @@ class Cascade
      */
     public static function getLogger($name)
     {
-        return Registry::getInstance($name);
+        return parent::getInstance($name);
     }
 
     /**
@@ -73,10 +73,10 @@ class Cascade
         $loggers = $configurer->configure();
 
         if ($options["disable_existing_loggers"] === true) {
-            Registry::clear();
+            parent::clear();
         }
         foreach ($loggers as $logger) {
-            Registry::addLogger($logger);
+            parent::addLogger($logger);
         }
     }
 }

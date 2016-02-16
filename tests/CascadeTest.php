@@ -14,7 +14,6 @@ namespace MattyG\MonologCascade\Tests;
 use MattyG\MonologCascade\Cascade;
 use MattyG\MonologCascade\Tests\Fixtures;
 use Monolog\Logger;
-use Monolog\Registry;
 
 /**
  * @author Raphael Antonmattei <rantonmattei@theorchard.com>
@@ -22,10 +21,10 @@ use Monolog\Registry;
  */
 class CascadeTest extends \PHPUnit_Framework_TestCase
 {
-    public function teardown()
+    public function tearDown()
     {
-        Registry::clear();
-        parent::teardown();
+        Cascade::clear();
+        parent::tearDown();
     }
 
     /**

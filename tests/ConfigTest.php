@@ -19,7 +19,6 @@ use MattyG\MonologCascade\Tests\Fixtures;
 use Monolog\Handler\HandlerInterface;
 use Monolog\Formatter\FormatterInterface;
 use Monolog\Logger;
-use Monolog\Registry;
 
 /**
  * Class ConfigTest

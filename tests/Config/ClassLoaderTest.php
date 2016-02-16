@@ -16,7 +16,6 @@ use MattyG\MonologCascade\Tests\Fixtures\SampleClass;
 use MattyG\MonologCascade\Tests\Fixtures\DependentClass;
 use Monolog\Handler\TestHandler;
 use Monolog\Logger;
-use Monolog\Registry;
 
 /**
  * Class ClassLoaderTest

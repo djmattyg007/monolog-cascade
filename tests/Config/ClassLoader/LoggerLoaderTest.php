@@ -15,12 +15,10 @@ use MattyG\MonologCascade\Config\ClassLoader\LoggerLoader;
 use MattyG\MonologCascade\Monolog\LoggerFactory;
 use Monolog\Handler\TestHandler;
 use Monolog\Logger;
-use Monolog\Registry;
 
 /**
- * Class LoggerLoaderTest
- *
  * @author Raphael Antonmattei <rantonmattei@theorchard.com>
+ * @author Matthew Gamble
  */
 class LoggerLoaderTest extends \PHPUnit_Framework_TestCase
 {
