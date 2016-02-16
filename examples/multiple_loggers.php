@@ -1,14 +1,13 @@
 <?php
-require_once(realpath(__DIR__.'/../vendor/autoload.php'));
 
-use Cascade\Cascade;
+require_once(dirname(__DIR__) . "/vendor/autoload.php");
 
-$loggerConfigFile = realpath(__DIR__.'/logger_config.yml');
+use MattyG\MonologCascade\Cascade;
 
-// you can use json too!
-// $loggerConfigFile = realpath(__DIR__.'/logger_config.json');
+$loggerConfig = file_get_contents(__DIR__ . "/logger_config.json");
+$loggerConfigArray = json_decode($loggerConfig, true);
 
-Cascade::fileConfig($loggerConfigFile);
+Cascade::configure($loggerConfigArray);
 Cascade::getLogger('loggerA')->info('Well, that works!');
 Cascade::getLogger('loggerB')->error('Maybe not...');
 

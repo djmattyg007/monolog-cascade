@@ -34,7 +34,7 @@ $config = json_decode(file_get_contents("/path/to/some/config.json"), true);
 $config = yaml_parse_file("/path/to/some/config.yml");
 
 // configure your loggers
-Cascade::fileConfig($config);
+Cascade::configure($config);
 ```
 
 Then just use your logger as shown below
@@ -45,7 +45,7 @@ Cascade::getLogger('myApp')->error('Maybe not...');
 
 Configuring your loggers
 ------------------------
-This fork of Monolog Cascade only supports configuration passed as an array. This allows you to store your configuration in whatever format you desire.
+This fork of Monolog Cascade only supports configuration passed as an array. This allows you to store your configuration in whatever format you desire, and avoids the runtime cost of checking which format you're using for configuration.
 
 ### Configuration structure
 Here is a sample JSON config file:

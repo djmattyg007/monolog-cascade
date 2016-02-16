@@ -1,0 +1,33 @@
+{
+   "version": 1,
+   "handlers": {
+      "sentry": {
+         "class": "Monolog\\Handler\\RavenHandler",
+         "ravenClient": {
+            "class": "Raven_Client",
+            "options_or_dsn": "https://something:dummy@getsentry.com/1"
+         },
+         "level": "DEBUG"
+      },
+      "redis": {
+         "class": "Monolog\\Handler\\RedisHandler",
+         "level": "DEBUG",
+         "key": "cascade",
+         "redis": {
+            "class": "Redis",
+            "connect": [
+               "127.0.0.1",
+               6379
+            ]
+         }
+      }
+   },
+   "loggers": {
+      "dependency": {
+         "handlers": [
+            "sentry",
+            "redis"
+         ]
+      }
+   }
+}

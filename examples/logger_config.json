@@ -1,11 +1,13 @@
 {
   "version": 1,
-  "disable_existing_loggers": false,
+  "options": {
+    "disable_existing_loggers": false
+  },
   "formatters": {
     "spaced": {
       "class": "Monolog\\Formatter\\LineFormatter",
       "format": "%datetime% %channel%.%level_name%  %message%\n",
-      "include_stacktraces": true
+      "includeStacktraces": true
     },
     "dashed": {
       "format": "%datetime%-%channel%.%level_name% - %message%\n"
