@@ -1,4 +1,5 @@
 <?php
+
 /**
  * This file is part of the MattyG Monolog Cascade package.
  *
@@ -9,9 +10,11 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
+
 namespace MattyG\MonologCascade\Config\ClassLoader;
 
 use MattyG\MonologCascade\Config\ClassLoader;
+use Monolog\Formatter\LineFormatter;
 
 /**
  * Formatter Loader. Loads the Formatter options, validate them and instantiates
@@ -23,15 +26,13 @@ use MattyG\MonologCascade\Config\ClassLoader;
  */
 class FormatterLoader extends ClassLoader
 {
-    /**
-     * Default formatter class to use if none is provided in the option array
-     */
-    const DEFAULT_CLASS = '\Monolog\Formatter\LineFormatter';
+    // Default formatter class to use if none is provided in the option array.
+    public const DEFAULT_CLASS = LineFormatter::class;
 
     /**
      * @see Monolog\Formatter classes for formatter options
      *
-     * @param array $formatterOptions Formatter options
+     * @param array $formatterOptions Formatter options.
      */
     public function __construct(array $formatterOptions)
     {
@@ -45,25 +46,25 @@ class FormatterLoader extends ClassLoader
      * you want to support additional custom options.
      *
      * The syntax is the following:
-     *     array(
-     *         '\Full\Absolute\Namespace\ClassName' => array(
-     *             'myOption' => Closure
-     *         ), ...
-     *     )
+     *     [
+     *         \Full\Absolute\Namespace\ClassName::class => [
+     *             'myOption' => Closure,
+     *         ], ...
+     *     ]
      *
      * You can use the '*' wildcard if you want to set up an option for all
-     * Formatter classes
+     * Formatter classes.
      *
      * @todo add handlers to handle extra options for all known Monolog formatters
      */
-    public static function initExtraOptionsHandlers()
+    public static function initExtraOptionsHandlers(): void
     {
-        self::$extraOptionHandlers = array(
-            '\Monolog\Formatter\LineFormatter' => array(
-                'includeStacktraces' => function ($instance, $include) {
+        self::$extraOptionHandlers = [
+            LineFormatter::class => [
+                "includeStacktraces" => function ($instance, $include) {
                     $instance->includeStacktraces($include);
                 }
-            )
-        );
+            ],
+        ];
     }
 }

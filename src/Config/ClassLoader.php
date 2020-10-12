@@ -1,4 +1,5 @@
 <?php
+
 /*
  * This file is part of the MattyG Monolog Cascade package.
  *
@@ -9,20 +10,23 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
+
 namespace MattyG\MonologCascade\Config;
 
+use Closure;
 use MattyG\MonologCascade\Config\ClassLoader\Resolver\ConstructorResolver;
 use MattyG\MonologCascade\Config\ClassLoader\Resolver\ExtraOptionsResolver;
+use ReflectionClass;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 /**
  * Class Loader. Instantiate an object given a set of options. The option might look like:
- *     array(
+ *     [
  *         'class' => 'Some\Class'
  *         'some_contruct_param' => 'abc',
  *         'some_param' => 'def',
- *         'some_other_param' => 'sdsad'
- *     )
+ *         'some_other_param' => 'sdsad',
+ *     ]
  *
  * Some of them are applicable to the contructor, other are applicable to other handlers.
  * For the latter you need to make sure there is a handler defined for that option
@@ -33,26 +37,27 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 class ClassLoader
 {
     /**
-     * Default class to use if none is provided in the option array
+     * Default class to use if none is provided in the option array.
+     * TODO: Change this to stdClass::class
      */
-    const DEFAULT_CLASS = '\stdClass';
+    public const DEFAULT_CLASS = '\stdClass';
 
     /**
      * Array of Closures indexed by class.
-     *     array(
-     *         '\Full\Absolute\Namespace\ClassName' => array(
-     *             'myOption' => Closure
-     *         ), ...
-     *     )
+     *     [
+     *         \Full\Absolute\Namespace\ClassName::class => [
+     *             'myOption' => Closure,
+     *         [, ...
+     *     ]
      *
      * @var array
      */
-    public static $extraOptionHandlers = array();
+    public static $extraOptionHandlers = [];
 
     /**
      * Name of the class you want to load
      *
-     * @var String
+     * @var string
      */
     public $class = null;
 
@@ -68,37 +73,37 @@ class ClassLoader
      *
      * @var array
      */
-    protected $rawOptions = array();
+    protected $rawOptions = [];
 
     /**
      * The option array might look like:
-     *     array(
+     *     [
      *         'class' => 'Some\Class',
      *         'some_contruct_param' => 'abc',
      *         'some_param' => 'def',
-     *         'some_other_param' => 'sdsad'
-     *     )
+     *         'some_other_param' => 'sdsad',
+     *     ]
      *
-     * @param array $options array of options
+     * @param array $options
      */
     public function __construct(array $options)
     {
         $this->rawOptions = $options;
         $this->setClass();
-        $this->reflected = new \ReflectionClass($this->class);
+        $this->reflected = new ReflectionClass($this->class);
     }
 
     /**
-     * Set the class you want to load from the raw option array
+     * Set the class you want to load from the raw option array.
      */
     protected function setClass()
     {
-        if (!isset($this->rawOptions['class'])) {
-            $this->rawOptions['class'] = static::DEFAULT_CLASS;
+        if (!isset($this->rawOptions["class"])) {
+            $this->rawOptions["class"] = static::DEFAULT_CLASS;
         }
 
-        $this->class = $this->rawOptions['class'];
-        unset($this->rawOptions['class']);
+        $this->class = $this->rawOptions["class"];
+        unset($this->rawOptions["class"]);
     }
 
     /**
@@ -107,12 +112,13 @@ class ClassLoader
      *
      * @author Dom Morgan <dom@d3r.com>
      */
-    protected function loadChildClasses()
+    protected function loadChildClasses(): void
     {
         foreach ($this->rawOptions as &$option) {
-            if (is_array($option)
-                && array_key_exists('class', $option)
-                && class_exists($option['class'])
+            if (
+                is_array($option) &&
+                array_key_exists("class", $option) &&
+                class_exists($option["class"])
             ) {
                 $classLoader = new ClassLoader($option);
                 $option = $classLoader->load();
@@ -125,7 +131,7 @@ class ClassLoader
      *   - constructor options and
      *   - extra options
      * Extra options are those that are not in the contructor. The constructor arguments determine
-     * what goes into which bucket
+     * what goes into which bucket.
      *
      * @return array An array of constructorOptions and extraOptions
      */
@@ -150,10 +156,10 @@ class ClassLoader
             array_keys($extraOptions)
         );
 
-        return array(
+        return [
             $constructorResolver->resolve($constructorOptions),
-            $extraOptionsResolver->resolve($extraOptions, $this)
-        );
+            $extraOptionsResolver->resolve($extraOptions, $this),
+        ];
     }
 
     /**
@@ -166,6 +172,7 @@ class ClassLoader
     {
         $this->loadChildClasses();
 
+        // TODO: Change this to use named list expansion
         list($constructorResolvedOptions, $extraResolvedOptions) = $this->resolveOptions();
         $instance = $this->reflected->newInstanceArgs($constructorResolvedOptions);
 
@@ -177,23 +184,22 @@ class ClassLoader
     /**
      * Check whether or not an option is supported by the loader.
      *
-     * @param string $extraOptionName Option name
-     * @return bool Whether or not an option is supported by the loader
+     * @param string $extraOptionName Option name.
+     * @return bool Whether or not an option is supported by the loader.
      */
-    public function canHandle($extraOptionName)
+    public function canHandle(string $extraOptionName): bool
     {
-        return
-            isset(self::$extraOptionHandlers['*'][$extraOptionName]) ||
+        return isset(self::$extraOptionHandlers['*'][$extraOptionName]) ||
             isset(self::$extraOptionHandlers[$this->class][$extraOptionName]);
     }
 
     /**
      * Get the corresponding handler for a given option.
      *
-     * @param string $extraOptionName Option name
-     * @return Closure|null Corresponding Closure object or null if not found
+     * @param string $extraOptionName Option name.
+     * @return Closure|null Corresponding Closure object or null if not found.
      */
-    public function getExtraOptionsHandler($extraOptionName)
+    public function getExtraOptionsHandler(string $extraOptionName): ?Closure
     {
         // Check extraOption handlers that are valid for all classes
         if (isset(self::$extraOptionHandlers['*'][$extraOptionName])) {
@@ -209,23 +215,26 @@ class ClassLoader
     }
 
     /**
-     * Set extra options if any were requested
+     * Set extra options if any were requested.
      *
-     * @param array $extraOptions An array of extra options (key => value)
-     * @param mixed $instance The instance you want to set options for
+     * TODO: Add ': void' return type to basically everything
+     *
+     * @param array $extraOptions An array of extra options (key => value).
+     * @param mixed $instance The instance you want to set options for.
      */
-    public function loadExtraOptions($extraOptions, $instance)
+    public function loadExtraOptions($extraOptions, $instance): void
     {
         foreach ($extraOptions as $name => $value) {
             if ($this->reflected->hasMethod($name)) {
                 // There is a method to handle this option
                 call_user_func_array(
-                    array($instance, $name),
-                    is_array($value) ? $value : array($value)
+                    [$instance, $name],
+                    is_array($value) ? $value : [$value]
                 );
                 continue;
             }
-            if ($this->reflected->hasProperty($name) &&
+            if (
+                $this->reflected->hasProperty($name) &&
                 $this->reflected->getProperty($name)->isPublic()
             ) {
                 // There is a public member we can set for this option

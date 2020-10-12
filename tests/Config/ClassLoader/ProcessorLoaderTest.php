@@ -1,4 +1,5 @@
 <?php
+
 /**
  * This file is part of the MattyG Monolog Cascade package.
  *
@@ -9,22 +10,22 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
+
 namespace MattyG\MonologCascade\Tests\Config\ClassLoader;
 
 use MattyG\MonologCascade\Config\ClassLoader\ProcessorLoader;
 use Monolog\Processor\WebProcessor;
+use PHPUnit\Framework\TestCase;
 
 /**
- * Class ProcessorLoaderTest
- *
  * @author Kate Burdon <kburdon@tableau.com>
  */
-class ProcessorLoaderTest extends \PHPUnit_Framework_TestCase
+class ProcessorLoaderTest extends TestCase
 {
     public function testProcessorLoader()
     {
         $options = array(
-            'class' => '\Monolog\Processor\WebProcessor'
+            'class' => WebProcessor::class,
         );
         $processors = array(new WebProcessor());
         $loader = new ProcessorLoader($options, $processors);

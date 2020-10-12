@@ -1,4 +1,5 @@
 <?php
+
 /**
  * This file is part of the MattyG Monolog Cascade package.
  *
@@ -9,8 +10,10 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
+
 namespace MattyG\MonologCascade\Tests;
 
+use InvalidArgumentException;
 use MattyG\MonologCascade\Config;
 use MattyG\MonologCascade\Monolog\LoggerFactory;
 use MattyG\MonologCascade\Config\ClassLoader\FormatterLoader;
@@ -19,13 +22,13 @@ use MattyG\MonologCascade\Tests\Fixtures;
 use Monolog\Handler\HandlerInterface;
 use Monolog\Formatter\FormatterInterface;
 use Monolog\Logger;
+use PHPUnit\Framework\TestCase;
+use RuntimeException;
 
 /**
- * Class ConfigTest
- *
  * @author Raphael Antonmattei <rantonmattei@theorchard.com>
  */
-class ConfigTest extends \PHPUnit_Framework_TestCase
+class ConfigTest extends TestCase
 {
     use Reflector;
 
@@ -34,13 +37,13 @@ class ConfigTest extends \PHPUnit_Framework_TestCase
      */
     protected $loggerFactory;
 
-    public function setUp()
+    public function setUp(): void
     {
         $this->loggerFactory = new LoggerFactory();
         parent::setUp();
     }
 
-    public function tearDown()
+    public function tearDown(): void
     {
         $this->loggerFactory = null;
         parent::tearDown();
@@ -97,11 +100,11 @@ class ConfigTest extends \PHPUnit_Framework_TestCase
 
     /**
      * Test configure throwing an exception due to missing formatter with name 'spaced'.
-     *
-     * @expectedException \InvalidArgumentException
      */
     public function testConfigureHandlersWithNoFormatters()
     {
+        $this->expectException(InvalidArgumentException::class);
+
         $options = Fixtures::getArrayConfig();
         $configurer = new Config($options, $this->loggerFactory);
         $testMethod = $this->getNonPublicMethod(get_class($configurer), "configureHandlers");
@@ -123,7 +126,12 @@ class ConfigTest extends \PHPUnit_Framework_TestCase
 
         foreach ($handlerIds as $handlerId) {
             // Make sure the handler is of the correct type
-            $this->assertObjectIsConfiguredClassOrDefault($handlerId, $handlers, $hOptions, HandlerLoader::DEFAULT_CLASS);
+            $this->assertObjectIsConfiguredClassOrDefault(
+                $handlerId,
+                $handlers,
+                $hOptions,
+                HandlerLoader::DEFAULT_CLASS
+            );
             // Make sure the formatter assigned to the handler is the exact same mock we created
             $this->assertSame($formatters[$hOptions[$handlerId]["formatter"]], $handlers[$handlerId]->getFormatter());
         }
@@ -178,7 +186,7 @@ class ConfigTest extends \PHPUnit_Framework_TestCase
     protected function buildHandlers(array $handlerConfiguration)
     {
         // Loggers shouldn't care what handler is used as long as it implements HandlerInterface.
-        $mock = $this->getMock(HandlerInterface::class);
+        $mock = $this->getMockBuilder(HandlerInterface::class)->getMock();
 
         $handlers = array();
         foreach ($handlerConfiguration as $handlerId => $handlerOptions) {
@@ -189,11 +197,11 @@ class ConfigTest extends \PHPUnit_Framework_TestCase
 
     /**
      * Test configure throwing an exception due to missing 'loggers' key.
-     *
-     * @expectedException \RuntimeException
      */
     public function testConfigureWithNoLoggers()
     {
+        $this->expectException(RuntimeException::class);
+
         $options = array();
 
         // Mocking the config object

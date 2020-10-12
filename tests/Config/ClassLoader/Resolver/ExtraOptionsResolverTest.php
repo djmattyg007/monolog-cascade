@@ -1,4 +1,5 @@
 <?php
+
 /**
  * This file is part of the MattyG Monolog Cascade package.
  *
@@ -9,51 +10,47 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
+
 namespace MattyG\MonologCascade\Tests\Config\ClassLoader\Resolver;
 
 use MattyG\MonologCascade\Config\ClassLoader;
 use MattyG\MonologCascade\Config\ClassLoader\Resolver\ExtraOptionsResolver;
 use MattyG\MonologCascade\Tests\Fixtures\SampleClass;
+use PHPUnit\Framework\TestCase;
+use ReflectionClass;
+use Symfony\Component\OptionsResolver\Exception\UndefinedOptionsException;
 
 /**
- * Class ExtraOptionsResolverTest
- *
  * @author Raphael Antonmattei <rantonmattei@theorchard.com>
  */
-class ExtraOptionsResolverTest extends \PHPUnit_Framework_TestCase
+class ExtraOptionsResolverTest extends TestCase
 {
     /**
-     * Reflection class for which you want to resolve extra options
+     * Reflection class for which you want to resolve extra options.
      *
-     * @var \ReflectionClass
+     * @var ReflectionClass
      */
     protected $reflected = null;
 
     /**
-     * ExtraOptions Resolver
+     * ExtraOptions resolver.
      *
      * @var ExtraOptionsResolver
      */
     protected $resolver = null;
 
-    /**
-     * Set up function
-     */
-    public function setUp()
+    public function setUp(): void
     {
         $this->class = SampleClass::class;
-        $this->params = array('optionalA', 'optionalB');
+        $this->params = ["optionalA", "optionalB"];
         $this->resolver = new ExtraOptionsResolver(
-            new \ReflectionClass($this->class),
+            new ReflectionClass($this->class),
             $this->params
         );
         parent::setUp();
     }
 
-    /**
-     * Tear down function
-     */
-    public function tearDown()
+    public function tearDown(): void
     {
         $this->resolver = null;
         $this->class = null;
@@ -61,25 +58,25 @@ class ExtraOptionsResolverTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * Test the hsah key generation
+     * Test the hsah key generation.
      */
     public function testGenerateParamsHashKey()
     {
-        $a = array('optionA', 'optionB', 'optionC');
-        $b = array('optionA', 'optionB', 'optionC');
+        $a = ["optionA", "optionB", "optionC"];
+        $b = ["optionA", "optionB", "optionC"];
 
-        $this->assertEquals(
+        $this->assertSame(
             ExtraOptionsResolver::generateParamsHashKey($a),
             ExtraOptionsResolver::generateParamsHashKey($b)
         );
     }
 
     /**
-     * Test the resolver contructor
+     * Test the resolver contructor.
      */
     public function testConstructor()
     {
-        $this->assertEquals($this->class, $this->resolver->getReflected()->getName());
+        $this->assertSame($this->class, $this->resolver->getReflected()->getName());
         $this->assertEquals($this->params, $this->resolver->getParams());
     }
 
@@ -89,42 +86,42 @@ class ExtraOptionsResolverTest extends \PHPUnit_Framework_TestCase
     public function testResolve()
     {
         $this->assertEquals(
-            array_combine($this->params, array('hello', 'there')),
-            $this->resolver->resolve(array('optionalB' => 'there', 'optionalA' => 'hello'))
+            array_combine($this->params, ["hello", "there"]),
+            $this->resolver->resolve(["optionalB" => "there", "optionalA" => "hello"])
         );
 
         // Resolve an empty array (edge case)
-        $this->assertEquals(array(), $this->resolver->resolve(array()));
+        $this->assertEquals([], $this->resolver->resolve([]));
     }
 
     /**
      * Data provider for testResolveWithInvalidOptions
-     * @return array of arrays with expected resolved values and options used as input
      *
-     * The order of the input options does not matter and is somewhat random. The resolution
+     * The order of the input options does not matter and is somewhat random.
+     *
+     * @return array List of arrays with expected resolved values and options used as input.
      */
     public function optionsProvider()
     {
-        return array(
-            array(
-                array('optionalA', 'optionalB', 'mandatory'),
+        return [
+            [
+                ["optionalA", "optionalB", "mandatory"],
                 $this->getMockBuilder(ClassLoader::class)
                     ->disableOriginalConstructor()
-                    ->getMock()->method('canHandle')
-                    ->willReturn(true)
-            )
-        );
+                    ->getMock()->method("canHandle")
+                    ->willReturn(true),
+            ]
+        ];
     }
 
     /**
      * Test resolving with valid options
-     *
      */
     public function testResolveWithCustomOptionHandler()
     {
-        $this->params = array('optionalA', 'optionalB', 'mandatory');
+        $this->params = ["optionalA", "optionalB", "mandatory"];
         $this->resolver = new ExtraOptionsResolver(
-            new \ReflectionClass($this->class),
+            new ReflectionClass($this->class),
             $this->params
         );
 
@@ -137,14 +134,15 @@ class ExtraOptionsResolverTest extends \PHPUnit_Framework_TestCase
             ->willReturn(true);
 
         // Resolve an empty array (edge case)
-        $this->assertEquals(array('mandatory' => 'abc'), $this->resolver->resolve(array('mandatory' => 'abc'), $stub));
+        $this->assertEquals(["mandatory" => "abc"], $this->resolver->resolve(["mandatory" => "abc"], $stub));
     }
 
     /**
      * Data provider for testResolveWithInvalidOptions
-     * @return array of arrays with expected resolved values and options used as input
      *
-     * The order of the input options does not matter and is somewhat random. The resolution
+     * The order of the input options does not matter and is somewhat random.
+     *
+     * @return array List of arrays with expected resolved values and options used as input.
      */
     public function invalidOptionsProvider()
     {
@@ -164,13 +162,14 @@ class ExtraOptionsResolverTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * Test resolving with invalid options
+     * Test resolving with invalid options.
      *
      * @dataProvider invalidOptionsProvider
-     * @expectedException Symfony\Component\OptionsResolver\Exception\UndefinedOptionsException
      */
     public function testResolveWithInvalidOptions($invalidOptions)
     {
+        $this->expectException(UndefinedOptionsException::class);
+
         $this->resolver->resolve($invalidOptions);
     }
 }

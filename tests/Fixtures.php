@@ -1,4 +1,5 @@
 <?php
+
 /**
  * This file is part of the MattyG Monolog Cascade package.
  *
@@ -9,16 +10,17 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
+
 namespace MattyG\MonologCascade\Tests;
 
-class Fixtures
+abstract class Fixtures
 {
     /**
      * Return the fixture directory.
      *
-     * @return string Fixture directory
+     * @return string Fixture directory.
      */
-    public static function fixtureDir()
+    public static function fixtureDir(): string
     {
         return realpath(__DIR__ . "/Fixtures");
     }
@@ -26,9 +28,9 @@ class Fixtures
     /**
      * Return a path to a non existing file.
      *
-     * @return string Wrong file path
+     * @return string Wrong file path.
      */
-    public static function getInvalidFile()
+    public static function getInvalidFile(): string
     {
         return "some/non/existing/file.txt";
     }
@@ -36,9 +38,9 @@ class Fixtures
     /**
      * Return a sample string.
      *
-     * @return string Sample string
+     * @return string Sample string.
      */
-    public static function getSampleString()
+    public static function getSampleString(): string
     {
         return " some string with new \n\n lines and white spaces \n\n";
     }
@@ -46,9 +48,9 @@ class Fixtures
     /**
      * Return a config array.
      *
-     * @return array Config array
+     * @return array Config array.
      */
-    public static function getArrayConfig()
+    public static function getArrayConfig(): array
     {
         require self::fixtureDir() . "/fixture_config.php";
 
@@ -58,13 +60,13 @@ class Fixtures
     /**
      * Return a sample array.
      *
-     * @return array Sample array
+     * @return array Sample array.
      */
-    public static function getSamplePhpArray()
+    public static function getSamplePhpArray(): array
     {
         return array(
-            'greeting' => 'hello',
-            'to' => 'you'
+            "greeting" => "hello",
+            "to" => "you",
         );
     }
 }

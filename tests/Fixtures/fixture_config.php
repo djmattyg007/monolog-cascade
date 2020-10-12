@@ -1,4 +1,5 @@
 <?php
+
 /**
  * This file is part of the MattyG Monolog Cascade package.
  *
@@ -9,18 +10,19 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-$fixtureArray = array(
+
+$fixtureArray = [
     'version' => 1,
 
-    'formatters' => array(
-        'spaced' => array(
+    'formatters' => [
+        'spaced' => [
             'format' => "%datetime% %channel%.%level_name%  %message%\n",
             'includeStacktraces' => true,
-        ),
-        'dashed' => array(
+        ],
+        'dashed' => [
             'format' => "%datetime%-%channel%.%level_name% - %message%\n",
-        ),
-    ),
+        ],
+    ],
     'processors' => array(
         'tag_processor' => array(
             'class' => 'Monolog\Processor\TagProcessor',
@@ -51,4 +53,4 @@ $fixtureArray = array(
             'handlers' => array('console', 'info_file_handler'),
         ),
     ),
-);
+];

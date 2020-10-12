@@ -1,4 +1,5 @@
 <?php
+
 /**
  * This file is part of the MattyG Monolog Cascade package.
  *
@@ -9,42 +10,39 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
+
 namespace MattyG\MonologCascade\Tests\Config\ClassLoader;
 
+use Closure;
+use Exception;
 use MattyG\MonologCascade\Config\ClassLoader\FormatterLoader;
+use Monolog\Formatter\LineFormatter;
+use PHPUnit\Framework\TestCase;
 
 /**
- * Class FormatterLoaderTest
- *
  * @author Raphael Antonmattei <rantonmattei@theorchard.com>
  */
-class FormatterLoaderTest extends \PHPUnit_Framework_TestCase
+class FormatterLoaderTest extends TestCase
 {
-    /**
-     * Set up function
-     */
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
         new FormatterLoader(array());
     }
 
-    /**
-     * Tear down function
-     */
-    public function tearDown()
+    public function tearDown(): void
     {
         FormatterLoader::$extraOptionHandlers = array();
         parent::tearDown();
     }
 
     /**
-     * Check if the handler exists for a given class and option
-     * Also checks that it a callable and return it
+     * Check if the handler exists for a given class and option.
+     * Also checks that it a callable and return it.
      *
-     * @param  string $class Class name the handler applies to
-     * @param  string $optionName Option name
-     * @return \Closure Closure
+     * @param  string $class Class name the handler applies to.
+     * @param  string $optionName Option name.
+     * @return Closure Closure.
      */
     private function getHandler($class, $optionName)
     {
@@ -56,7 +54,7 @@ class FormatterLoaderTest extends \PHPUnit_Framework_TestCase
 
             return $closure;
         } else {
-            throw new \Exception(
+            throw new Exception(
                 sprintf(
                     'Handler %s is not defined for class %s',
                     $optionName,
@@ -68,12 +66,12 @@ class FormatterLoaderTest extends \PHPUnit_Framework_TestCase
 
     /**
      * Tests that calling the given Closure will trigger a method call with the given param
-     * in the given class
+     * in the given class.
      *
-     * @param  string   $class      Class name
-     * @param  string   $methodName Method name
-     * @param  mixed    $methodArg  Parameter passed to the closure
-     * @param  \Closure $closure    Closure to call
+     * @param string $class Class name.
+     * @param string $methodName Method name.
+     * @param mixed $methodArg Parameter passed to the closure.
+     * @param Closure $closure Closure to call.
      */
     private function doTestMethodCalledInHandler($class, $methodName, $methodArg, \Closure $closure)
     {
@@ -90,19 +88,18 @@ class FormatterLoaderTest extends \PHPUnit_Framework_TestCase
         $closure($mock, $methodArg);
     }
 
-
     /**
-     * Test that handlers exist
+     * Test that handlers exist.
      */
     public function testHandlersExist()
     {
-        $this->assertTrue(count(FormatterLoader::$extraOptionHandlers) > 0);
+        $this->assertNotEmpty(FormatterLoader::$extraOptionHandlers);
     }
 
     /**
-     * Data provider for testHandlers
-     * /!\ Important note: just add values to this array if you need to test a newly added handler
-     * If one of your handlers calls more than one method you can add more than one entries
+     * Data provider for testHandlers.
+     * /!\ Important note: just add values to this array if you need to test a newly added handler.
+     * If one of your handlers calls more than one method you can add more than one entries.
      *
      * @return array of array of args for testHandlers
      */
@@ -110,16 +107,16 @@ class FormatterLoaderTest extends \PHPUnit_Framework_TestCase
     {
         return array(
             array(
-                '\Monolog\Formatter\LineFormatter',  // Class name
-                'includeStacktraces',                // Option name
-                true,                                // Option test value
-                'includeStacktraces'                 // Name of the method called by your handler
-            )
+                LineFormatter::class,  // Class name
+                'includeStacktraces',  // Option name
+                true,                  // Option test value
+                'includeStacktraces',  // Name of the method called by your handler
+            ),
         );
     }
 
     /**
-     * Test the extra option handlers
+     * Test the extra option handlers.
      *
      * @dataProvider handlerParamsProvider
      */

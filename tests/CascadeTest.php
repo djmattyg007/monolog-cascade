@@ -1,4 +1,5 @@
 <?php
+
 /**
  * This file is part of the MattyG Monolog Cascade package.
  *
@@ -9,30 +10,25 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
+
 namespace MattyG\MonologCascade\Tests;
 
+use InvalidArgumentException;
 use MattyG\MonologCascade\Cascade;
 use MattyG\MonologCascade\Tests\Fixtures;
 use Monolog\Logger;
+use PHPUnit\Framework\TestCase;
 
 /**
  * @author Raphael Antonmattei <rantonmattei@theorchard.com>
  * @author Matthew Gamble
  */
-class CascadeTest extends \PHPUnit_Framework_TestCase
+class CascadeTest extends TestCase
 {
-    public function tearDown()
+    public function tearDown(): void
     {
         Cascade::clear();
         parent::tearDown();
-    }
-
-    /**
-     * @expectedException InvalidArgumentException
-     */
-    public function testRegistryWithInvalidName()
-    {
-        $logger = Cascade::getLogger(null);
     }
 
     public function testConfigure()

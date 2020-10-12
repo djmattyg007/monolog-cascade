@@ -1,4 +1,5 @@
 <?php
+
 /**
  * This file is part of the MattyG Monolog Cascade package.
  *
@@ -9,11 +10,13 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
+
 namespace MattyG\MonologCascade;
 
 use MattyG\MonologCascade\Config;
 use MattyG\MonologCascade\Monolog\LoggerFactory;
 use Monolog\Handler\HandlerInterface;
+use Monolog\Logger;
 use Monolog\Registry;
 
 /**
@@ -22,38 +25,38 @@ use Monolog\Registry;
  * @author Raphael Antonmattei <rantonmattei@theorchard.com>
  * @author Matthew Gamble
  *
- * @see \Monolog\Logger
- * @see \Monolog\Registry
+ * @see Logger
+ * @see Registry
  */
 class Cascade extends Registry
 {
     /**
      * @var array
      */
-    protected static $defaultOptions = array(
+    protected static $defaultOptions = [
         "disable_existing_loggers" => true,
-    );
+    ];
 
     /**
      * Get a Logger instance by name. Creates a new one if a Logger with the
-     * provided name does not exist
+     * provided name does not exist.
      *
-     * @param string $name Name of the requested Logger instance
+     * @param string $name Name of the requested Logger instance.
      * @return Logger Requested instance of Logger or new instance
      */
-    public static function getLogger($name)
+    public static function getLogger(string $name): Logger
     {
         return parent::getInstance($name);
     }
 
     /**
-     * Alias of getLogger
-     * @see getLogger
+     * Alias of getLogger.
      *
-     * @param string $name Name of the requested Logger instance
-     * @return Logger Requested instance of Logger or new instance
+     * @see getLogger
+     * @param string $name Name of the requested Logger instance.
+     * @return Logger Requested instance of Logger or new instance.
      */
-    public static function logger($name)
+    public static function logger(string $name): Logger
     {
         return self::getLogger($name);
     }
@@ -64,9 +67,9 @@ class Cascade extends Registry
      * @param array The array of configuration
      * @param LoggerFactory|null $loggerFactory
      */
-    public static function configure(array $config, $loggerFactory = null)
+    public static function configure(array $config, ?LoggerFactory $loggerFactory = null): void
     {
-        $options = array_merge(static::$defaultOptions, isset($config["options"]) ? $config["options"] : array());
+        $options = array_merge(static::$defaultOptions, isset($config["options"]) ? $config["options"] : []);
         unset($config["options"]);
 
         $configurer = new Config($config, $loggerFactory ?: new LoggerFactory());
@@ -75,6 +78,7 @@ class Cascade extends Registry
         if ($options["disable_existing_loggers"] === true) {
             parent::clear();
         }
+
         foreach ($loggers as $logger) {
             parent::addLogger($logger);
         }

@@ -1,4 +1,5 @@
 <?php
+
 /**
  * This file is part of the MattyG Monolog Cascade package.
  *
@@ -9,6 +10,7 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
+
 namespace MattyG\MonologCascade\Tests\Config;
 
 use MattyG\MonologCascade\Config\ClassLoader;
@@ -16,54 +18,51 @@ use MattyG\MonologCascade\Tests\Fixtures\SampleClass;
 use MattyG\MonologCascade\Tests\Fixtures\DependentClass;
 use Monolog\Handler\TestHandler;
 use Monolog\Logger;
+use PHPUnit\Framework\TestCase;
 
 /**
- * Class ClassLoaderTest
- *
  * @author Raphael Antonmattei <rantonmattei@theorchard.com>
  */
-class ClassLoaderTest extends \PHPUnit_Framework_TestCase
+class ClassLoaderTest extends TestCase
 {
-    /**
-     * Tear down function
-     */
-    public function tearDown()
+    public function tearDown(): void
     {
-        ClassLoader::$extraOptionHandlers = array();
+        ClassLoader::$extraOptionHandlers = [];
         parent::tearDown();
     }
 
     /**
-     * Provides options with and without a class param
+     * Provides options with and without a class param.
      *
-     * @return array of args
+     * @return array
      */
-    public function dataForTestSetClass()
+    public function dataForTestSetClass(): array
     {
-        return array(
-            array(
-                array(
-                    'class' => SampleClass::class,
-                    'some_param' => 'abc'
-                ),
-                SampleClass::class
-            ),
-            array(
-                array(
-                    'some_param' => 'abc'
-                ),
-                '\stdClass'
-            )
-        );
+        return [
+            [
+                [
+                    "class" => SampleClass::class,
+                    "some_param" => "abc",
+                ],
+                SampleClass::class,
+            ],
+            [
+                [
+                    "some_param" => "abc",
+                ],
+                // TODO: Test changing this to stdClass::class
+                "\\stdClass",
+            ],
+        ];
     }
 
     /**
-     * Testing the setClass method
+     * Testing the setClass method.
      *
-     * @param array $options array of options
      * @dataProvider dataForTestSetClass
+     * @param array $options Array of options.
      */
-    public function testSetClass($options, $expectedClass)
+    public function testSetClass($options, $expectedClass): void
     {
         $loader = new ClassLoader($options);
 
@@ -72,83 +71,83 @@ class ClassLoaderTest extends \PHPUnit_Framework_TestCase
 
     public function testGetExtraOptionsHandler()
     {
-        ClassLoader::$extraOptionHandlers = array(
-            '*' => array(
-                'hello' => function ($instance, $value) {
+        ClassLoader::$extraOptionHandlers = [
+            '*' => [
+                "hello" => function ($instance, $value) {
                     $instance->setHello(strtoupper($value));
                 }
-            ),
-            SampleClass::class => array(
-                'there' => function ($instance, $value) {
-                    $instance->setThere(strtoupper($value).'!!!');
+            ],
+            SampleClass::class => [
+                "there" => function ($instance, $value) {
+                    $instance->setThere(strtoupper($value) . "!!!");
                 }
-            )
-        );
+            ],
+        ];
 
-        $loader = new ClassLoader(array());
-        $existingHandler = $loader->getExtraOptionsHandler('hello');
+        $loader = new ClassLoader([]);
+        $existingHandler = $loader->getExtraOptionsHandler("hello");
         $this->assertNotNull($existingHandler);
         $this->assertTrue(is_callable($existingHandler));
 
-        $this->assertNull($loader->getExtraOptionsHandler('nohandler'));
+        $this->assertNull($loader->getExtraOptionsHandler("nohandler"));
     }
 
     public function testLoad()
     {
-        $options = array(
-            'class' => SampleClass::class,
-            'mandatory' => 'someValue',
-            'optionalX' => 'testing some stuff',
-            'optionalY' => 'testing other stuff',
-            'hello' => 'hello',
-            'there' => 'there',
-        );
+        $options = [
+            "class" => SampleClass::class,
+            "mandatory" => "someValue",
+            "optionalX" => "testing some stuff",
+            "optionalY" => "testing other stuff",
+            "hello" => "hello",
+            "there" => "there",
+        ];
 
-        ClassLoader::$extraOptionHandlers = array(
-            '*' => array(
-                'hello' => function ($instance, $value) {
+        ClassLoader::$extraOptionHandlers = [
+            "*" => [
+                "hello" => function ($instance, $value) {
                     $instance->setHello(strtoupper($value));
                 }
-            ),
-            SampleClass::class => array(
-                'there' => function ($instance, $value) {
-                    $instance->setThere(strtoupper($value).'!!!');
+            ],
+            SampleClass::class => [
+                "there" => function ($instance, $value) {
+                    $instance->setThere(strtoupper($value) . "!!!");
                 }
-            )
-        );
+            ]
+        ];
 
         $loader = new ClassLoader($options);
         $instance = $loader->load();
 
-        $expectedInstance = new SampleClass('someValue');
-        $expectedInstance->optionalX('testing some stuff');
-        $expectedInstance->optionalY = 'testing other stuff';
-        $expectedInstance->setHello('HELLO');
-        $expectedInstance->setThere('THERE!!!');
+        $expectedInstance = new SampleClass("someValue");
+        $expectedInstance->optionalX("testing some stuff");
+        $expectedInstance->optionalY = "testing other stuff";
+        $expectedInstance->setHello("HELLO");
+        $expectedInstance->setThere("THERE!!!");
 
         $this->assertEquals($expectedInstance, $instance);
     }
 
     /**
-     * Test a nested class to load
+     * Test a nested class to load.
      *
      * @author Dom Morgan <dom@d3r.com>
      */
     public function testLoadDependency()
     {
-        $options = array(
-            'class' => DependentClass::class,
-            'dependency' => array(
-                'class' => SampleClass::class,
-                'mandatory' => 'someValue',
-            )
-        );
+        $options = [
+            "class" => DependentClass::class,
+            "dependency" => [
+                "class" => SampleClass::class,
+                "mandatory" => "someValue",
+            ],
+        ];
 
         $loader = new ClassLoader($options);
         $instance = $loader->load();
 
         $expectedInstance = new DependentClass(
-            new SampleClass('someValue')
+            new SampleClass("someValue")
         );
 
         $this->assertEquals($expectedInstance, $instance);
